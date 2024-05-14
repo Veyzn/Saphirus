@@ -1,0 +1,46 @@
+name: Saphirus-System
+version: '1.0'
+main: com.saphrius.main.Main
+api-version: '1.19'
+commands:
+  gamemode:
+    aliases: ["gm"]
+  fly:
+  trash:
+  discord:
+    aliases: ["dc"]
+  feed:
+    aliases: ["food", "eat"]
+  globalmute:
+  chatclear:
+    aliases: ["cc"]
+  random:
+  countdown:
+  broadcast:
+    aliases: ["bc"]
+  workbench:
+    aliases: ["wb", "craft", "bench"]
+  bodysee:
+  invsee:
+  teamchat:
+    aliases: ["tc","staffchat", "sc"]
+  enderchest:
+    aliases: ["ender", "ec"]
+  spawn:
+  setspawn:
+  maintenance:
+  kickall:
+  pvp:
+  ban:
+  unban:
+  mute:
+  unmute:
+  warn:
+  delwarn:
+  playerinfo:
+  hcrate:
+  support:
+  fix:
+    aliases: ["fixall"]
+  fixhand:
+  daily:

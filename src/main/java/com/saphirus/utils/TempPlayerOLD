@@ -1,0 +1,362 @@
+package com.Saphirus.utils;
+
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+
+public class TempPlayerCache {
+
+
+    public static HashMap<String,Object> playerData = new HashMap<>();
+
+    private String uuid;
+    private File file;
+    private YamlConfiguration cfg;
+    File ordner = new File("./Saphirus/TempPlayerData/");
+
+    public TempPlayerCache(String uuid1) {
+        uuid = uuid1;
+        file = new File("./Saphirus/TempPlayerData/" + uuid1 + ".yml");
+        cfg = YamlConfiguration.loadConfiguration(file);
+    }
+
+    public boolean exists(){return file.exists();}
+
+    public void create(Player p) {
+
+        if(!ordner.exists()) {
+            ordner.mkdir();
+        }
+
+        if(!file.exists()) {
+
+            cfg.set("UUID", uuid);
+            cfg.set("Name", p.getName());
+            cfg.set("Clan", "None");
+            cfg.set("Money", 0L);
+            cfg.set("Credits", 0L);
+            cfg.set("Gems", 0L);
+            cfg.set("Linked", false);
+            cfg.set("WoodCutting", 0L);
+            cfg.set("Blocks", 0L);
+            cfg.set("Fishing", 0L);
+            cfg.set("PVE_KILLS", 0L);
+            cfg.set("Kills", 0);
+            cfg.set("Deaths", 0);
+            cfg.set("Killstreak", 0);
+            cfg.set("Bans", 0);
+            cfg.set("Mutes", 0);
+            cfg.set("Warns_Total", 0);
+            cfg.set("Warns_Now", 0);
+            cfg.set("Playtime", 0L);
+
+            save();
+        }
+    }
+
+    public void save() {
+        try {
+            cfg.save(file);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    public String getUUID() {
+        return cfg.getString("UUID");
+    }
+
+    public void setUUID(String uuid) {
+        cfg.set("UUID", uuid);
+        save();
+    }
+
+    public String getName() {
+        return cfg.getString("Name");
+    }
+
+    public void setName(String name) {
+        cfg.set("Name", name);
+        save();
+    }
+
+    public String getClan() {
+        return cfg.getString("Clan");
+    }
+
+    public void setClan(String clan) {
+        cfg.set("Clan", clan);
+        save();
+    }
+
+    public long getMoney() {
+        return cfg.getLong("Money");
+    }
+
+    public void setMoney(long money) {
+        cfg.set("Money", money);
+        save();
+    }
+
+    public long getCredits() {
+        return cfg.getLong("Credits");
+    }
+
+    public void setCredits(long credits) {
+        cfg.set("Credits", credits);
+        save();
+    }
+
+    public long getGems() {
+        return cfg.getLong("Gems");
+    }
+
+    public void setGems(long gems) {
+        cfg.set("Gems", gems);
+        save();
+    }
+
+    public boolean isLinked() {
+        return cfg.getBoolean("Linked");
+    }
+
+    public void setLinked(boolean linked) {
+        cfg.set("Linked", linked);
+        save();
+    }
+
+    public long getWoodCutting() {
+        return cfg.getLong("WoodCutting");
+    }
+
+    public void setWoodCutting(long woodCutting) {
+        cfg.set("WoodCutting", woodCutting);
+        save();
+    }
+
+    public long getBlocks() {
+        return cfg.getLong("Blocks");
+    }
+
+    public void setBlocks(long blocks) {
+        cfg.set("Blocks", blocks);
+        save();
+    }
+
+    public long getFishing() {
+        return cfg.getLong("Fishing");
+    }
+
+    public void setFishing(long fishing) {
+        cfg.set("Fishing", fishing);
+        save();
+    }
+
+    public long getPVE_KILLS() {
+        return cfg.getLong("PVE_KILLS");
+    }
+
+    public void setPVE_KILLS(long pveKills) {
+        cfg.set("PVE_KILLS", pveKills);
+        save();
+    }
+
+    public int getKills() {
+        return cfg.getInt("Kills");
+    }
+
+    public void setKills(int kills) {
+        cfg.set("Kills", kills);
+        save();
+    }
+
+    public int getDeaths() {
+        return cfg.getInt("Deaths");
+    }
+
+    public void setDeaths(int deaths) {
+        cfg.set("Deaths", deaths);
+        save();
+    }
+
+    public int getKillstreak() {
+        return cfg.getInt("Killstreak");
+    }
+
+    public void setKillstreak(int killstreak) {
+        cfg.set("Killstreak", killstreak);
+        save();
+    }
+
+    public int getBans() {
+        return cfg.getInt("Bans");
+    }
+
+    public void setBans(int bans) {
+        cfg.set("Bans", bans);
+        save();
+    }
+
+    public int getMutes() {
+        return cfg.getInt("Mutes");
+    }
+
+    public void setMutes(int mutes) {
+        cfg.set("Mutes", mutes);
+        save();
+    }
+
+    public int getWarns_Total() {
+        return cfg.getInt("Warns_Total");
+    }
+
+    public void setWarns_Total(int warnsTotal) {
+        cfg.set("Warns_Total", warnsTotal);
+        save();
+    }
+
+    public int getWarns_Now() {
+        return cfg.getInt("Warns_Now");
+    }
+
+    public void setWarns_Now(int warnsNow) {
+        cfg.set("Warns_Now", warnsNow);
+        save();
+    }
+
+    public long getPlaytime() {
+        return cfg.getLong("Playtime");
+    }
+
+    public void setPlaytime(long playtime) {
+        cfg.set("Playtime", playtime);
+        save();
+    }
+
+    // Add and remove methods for each field
+
+    public void addMoney(long amount) {
+        setMoney(getMoney() + amount);
+    }
+
+    public void removeMoney(long amount) {
+        setMoney(Math.max(0, getMoney() - amount));
+    }
+
+    public void addCredits(long amount) {
+        setCredits(getCredits() + amount);
+    }
+
+    public void removeCredits(long amount) {
+        setCredits(Math.max(0, getCredits() - amount));
+    }
+
+    public void addGems(long amount) {
+        setGems(getGems() + amount);
+    }
+
+    public void removeGems(long amount) {
+        setGems(Math.max(0, getGems() - amount));
+    }
+
+    public void addWoodCutting(long amount) {
+        setWoodCutting(getWoodCutting() + amount);
+    }
+
+    public void removeWoodCutting(long amount) {
+        setWoodCutting(Math.max(0, getWoodCutting() - amount));
+    }
+
+    public void addBlocks(long amount) {
+        setBlocks(getBlocks() + amount);
+    }
+
+    public void removeBlocks(long amount) {
+        setBlocks(Math.max(0, getBlocks() - amount));
+    }
+
+    public void addFishing(long amount) {
+        setFishing(getFishing() + amount);
+    }
+
+    public void removeFishing(long amount) {
+        setFishing(Math.max(0, getFishing() - amount));
+    }
+
+    public void addPVE_KILLS(long amount) {
+        setPVE_KILLS(getPVE_KILLS() + amount);
+    }
+
+    public void removePVE_KILLS(long amount) {
+        setPVE_KILLS(Math.max(0, getPVE_KILLS() - amount));
+    }
+
+    public void addKills(int amount) {
+        setKills(getKills() + amount);
+    }
+
+    public void removeKills(int amount) {
+        setKills(Math.max(0, getKills() - amount));
+    }
+
+    public void addDeaths(int amount) {
+        setDeaths(getDeaths() + amount);
+    }
+
+    public void removeDeaths(int amount) {
+        setDeaths(Math.max(0, getDeaths() - amount));
+    }
+
+    public void addKillstreak(int amount) {
+        setKillstreak(getKillstreak() + amount);
+    }
+
+    public void removeKillstreak(int amount) {
+        setKillstreak(Math.max(0, getKillstreak() - amount));
+    }
+
+    public void addBans(int amount) {
+        setBans(getBans() + amount);
+    }
+
+    public void removeBans(int amount) {
+        setBans(Math.max(0, getBans() - amount));
+    }
+
+    public void addMutes(int amount) {
+        setMutes(getMutes() + amount);
+    }
+
+    public void removeMutes(int amount) {
+        setMutes(Math.max(0, getMutes() - amount));
+    }
+
+    public void addWarns_Total(int amount) {
+        setWarns_Total(getWarns_Total() + amount);
+    }
+
+    public void removeWarns_Total(int amount) {
+        setWarns_Total(Math.max(0, getWarns_Total() - amount));
+    }
+
+    public void addWarns_Now(int amount) {
+        setWarns_Now(getWarns_Now() + amount);
+    }
+
+    public void removeWarns_Now(int amount) {
+        setWarns_Now(Math.max(0, getWarns_Now() - amount));
+    }
+
+    public void addPlaytime(long amount) {
+        setPlaytime(getPlaytime() + amount);
+    }
+
+    public void removePlaytime(long amount) {
+        setPlaytime(Math.max(0, getPlaytime() - amount));
+    }
+}
