@@ -40,9 +40,6 @@ public class JoinEvent implements Listener {
 
 
         TempPlayerCache tpc = new TempPlayerCache(p.getUniqueId().toString());
-        if(!tpc.isDataLoaded()) {
-            tpc.loadData();
-        }
 
 
                 Board board = new Board();
@@ -74,8 +71,8 @@ public class JoinEvent implements Listener {
                     timer++;
                     if(timer == 20) {
 
-                        TempPlayerCache tpc = TempPlayerCache.data.get(p.getUniqueId().toString());
-                        tpc.unloadData();
+                        TempPlayerCache tpc = new TempPlayerCache(p.getUniqueId().toString());
+                        tpc.unloadPlayer();
                         this.cancel();
                     }
                 } else {

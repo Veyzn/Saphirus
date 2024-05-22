@@ -34,7 +34,6 @@ public class BanCMD implements CommandExecutor, TabCompleter {
                 PlayerCache pc = new PlayerCache(uuid);
                 if(pc.exists()) {
                     TempPlayerCache tpc = new TempPlayerCache(uuid);
-
                     if(Maths.isInt(args[1])) {
                         String reason = "";
                         for(int i = 3; i < args.length; i++) {

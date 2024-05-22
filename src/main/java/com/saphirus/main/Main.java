@@ -53,7 +53,6 @@ public final class Main extends JavaPlugin {
         Config.createConfig();
         DailyConfig.createCFG();
         sql.createTablePlayerData();
-        sql.createGenPlayerTable();
         sql.createTableMuteTable();
         sql.createTableWarnTable();
         sql.createTableBanTable();
@@ -65,7 +64,6 @@ public final class Main extends JavaPlugin {
 
         for(Player all : Bukkit.getOnlinePlayers()) {
             TempPlayerCache tpc = new TempPlayerCache(all.getUniqueId().toString());
-            tpc.loadData();
         }
         //LOAD DATA AND SCOREBOARD
         new BukkitRunnable() {
@@ -74,9 +72,7 @@ public final class Main extends JavaPlugin {
                 new BukkitRunnable() {
                     @Override
                     public void run() {
-                        if(!TempPlayerCache.data.isEmpty()) {
                             TempPlayerCache.updateAllValuesInDatabase();
-                        }
                     }
                 }.runTaskTimerAsynchronously(Main.instance,20*60*5, 20*60*5);
 
@@ -103,7 +99,7 @@ public final class Main extends JavaPlugin {
             @Override
             public void run() {
                 for(Player all : Bukkit.getOnlinePlayers()) {
-                    TempPlayerCache tpc = TempPlayerCache.data.get(all.getUniqueId().toString());
+                    TempPlayerCache tpc = new TempPlayerCache(all.getUniqueId().toString());
                     tpc.setPlaytime(tpc.getPlaytime()+1);
                 }
             }

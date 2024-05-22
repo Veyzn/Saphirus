@@ -5,627 +5,431 @@ import com.saphirus.main.MySQL;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
 public class TempPlayerCache {
-
-    public static HashMap<String, TempPlayerCache> data = new HashMap<>();
+    private static final HashMap<String, HashMap<String, Object>> playerDataCache = new HashMap<>();
     static MySQL sql = Main.sql;
-    static Connection connection = sql.getConnection();
-    // Fields
-    private String UUID;
-    private String name;
-    private String clan;
-    private long money;
-    private long credits;
-    private long gems;
-    private boolean linked;
-    private long woodCutting;
-    private long blocks;
-    private long fishing;
-    private long pveKills;
-    private int kills;
-    private int deaths;
-    private int killstreak;
-    private int bans;
-    private int mutes;
-    private int warnsTotal;
-    private int warnsNow;
-    private long playtime;
-    private double multiplier;
-    private String gens;
-    private int level;
-    private long xp;
-    private String controlstation;
-    private boolean controlstation_placed;
-    private long collected_gems;
-    private long collected_money;
-    private int collected_crates;
-    private long collected_xp;
-    private String friends;
+    Connection connection = sql.getConnection();
 
-    // Constructors
+    private String uuid;
 
-    public TempPlayerCache(String uuid) {
-        UUID = uuid;
-        if(!isDataLoaded()) {
-            PlayerCache pc = new PlayerCache(UUID);
-            HashMap<String, Object> data = pc.getPlayerData();
-            HashMap<String, Object> genPlayerData = pc.getGenPlayerData();
-            name = (String) data.get("Name");
-            clan = (String) data.get("Clan");
-            money = (long) data.get("Money");
-            credits = (long) data.get("Credits");
-            gems = (long) data.get("Gems");
-            linked = (boolean) data.get("Linked");
-            woodCutting = (long) data.get("WoodCutting");
-            blocks = (long) data.get("Blocks");
-            pveKills = (long) data.get("PVE_Kills");
-            fishing = (long) data.get("Fishing");
-            kills = (int) data.get("Kills");
-            deaths = (int) data.get("Deaths");
-            killstreak = (int) data.get("Killstreak");
-            bans = (int) data.get("Bans");
-            mutes = (int) data.get("Mutes");
-            warnsTotal = (int) data.get("Warns_Total");
-            warnsNow = (int) data.get("Warns_Now");
-            playtime = (long) data.get("Playtime");
-
-            multiplier = (double) genPlayerData.get("Multiplier");
-            gens = (String) genPlayerData.get("Gens");
-            level = (int) genPlayerData.get("Level");
-            xp = (long) genPlayerData.get("XP");
-            controlstation = (String) genPlayerData.get("ControlStation");
-            controlstation_placed = (boolean) genPlayerData.get("ControlStationPlaced");
-            collected_gems = (long) genPlayerData.get("ControlStation_Collected_Gems");
-            collected_money = (long) genPlayerData.get("ControlStation_Collected_Money");
-            collected_crates = (int) genPlayerData.get("ControlStation_Collected_Crates");
-            collected_xp = (long) genPlayerData.get("ControlStation_Collected_XP");
+    public TempPlayerCache(String UUID) {
+        this.uuid = UUID;
+        if (!playerDataCache.containsKey(UUID)) {
+            loadPlayerDataFromDatabase();
         }
     }
 
-
-    public void loadData() {
-        data.put(getUUID(), this);
+    public void unloadPlayer() {
+        if(playerDataCache.containsKey(uuid)) {
+            PlayerCache pc = new PlayerCache(uuid);
+            pc.updateAllValues(playerDataCache.get(uuid));
+            playerDataCache.remove(uuid);
+        }
     }
 
-    public boolean isDataLoaded() {return data.containsKey(getUUID());}
-
-    public void unloadData() {
-        updateAllValuesPlayer();
-        data.remove(getUUID());
+    public static boolean isPlayerLoaded(String uuid) {
+        return playerDataCache.containsKey(uuid);
     }
 
-    // Getters and Setters
-
-    public String getUUID() {
-        return UUID;
+    private void loadPlayerDataFromDatabase() {
+        String selectQuery = "SELECT * FROM PlayerData WHERE UUID = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(selectQuery)) {
+            preparedStatement.setString(1, uuid);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    HashMap<String, Object> data = new HashMap<>();
+                    data.put("UUID", resultSet.getString("UUID"));
+                    data.put("Name", resultSet.getString("Name"));
+                    data.put("Team", resultSet.getString("Team"));
+                    data.put("Money", resultSet.getLong("Money"));
+                    data.put("Saphirus", resultSet.getLong("Saphirus"));
+                    data.put("Gems", resultSet.getLong("Gems"));
+                    data.put("Linked", resultSet.getBoolean("Linked"));
+                    data.put("WoodCutting", resultSet.getLong("WoodCutting"));
+                    data.put("Blocks", resultSet.getLong("Blocks"));
+                    data.put("Fishing", resultSet.getLong("Fishing"));
+                    data.put("PVE_KILLS", resultSet.getLong("PVE_KILLS"));
+                    data.put("Kills", resultSet.getInt("Kills"));
+                    data.put("Deaths", resultSet.getInt("Deaths"));
+                    data.put("Killstreak", resultSet.getInt("Killstreak"));
+                    data.put("Bans", resultSet.getInt("Bans"));
+                    data.put("Mutes", resultSet.getInt("Mutes"));
+                    data.put("Warns_Total", resultSet.getInt("Warns_Total"));
+                    data.put("Warns_Now", resultSet.getInt("Warns_Now"));
+                    data.put("JoinDate", resultSet.getString("JoinDate"));
+                    data.put("Playtime", resultSet.getLong("Playtime"));
+                    playerDataCache.put(uuid, data);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
-    public void setUUID(String UUID) {
-        this.UUID = UUID;
+    public static HashMap<String, Object> getPlayerData(String uuid) {
+        return playerDataCache.get(uuid);
     }
 
-    public String getName() {
-        return name;
+    private Map<String, Object> getPlayerData() {
+        return playerDataCache.get(uuid);
     }
 
-    public void setName(String name) {
-        this.name = name;
+    private long getLongValue(String key) {
+        return (long) getPlayerData().get(key);
     }
 
-    public String getClan() {
-        return clan;
-    }
-    public boolean inClan() {return !clan.equalsIgnoreCase("none");}
-
-    public double getMultiplier() {
-        return multiplier;
+    private int getIntValue(String key) {
+        return (int) getPlayerData().get(key);
     }
 
-    public void setMultiplier(double multiplier) {
-        this.multiplier = multiplier;
+    private void updateLongValue(String key, long value) {
+        getPlayerData().put(key, value);
     }
 
-    // Getter and Setter for gens
-    public String getGens() {
-        return gens;
+    private String getStringValue(String key) {
+        return (String) getPlayerData().get(key);
     }
 
-    public void setGens(String gens) {
-        this.gens = gens;
+    private void updateStringValue(String key, String value) {
+        getPlayerData().put(key, value);
     }
 
-    // Getter and Setter for level
-    public int getLevel() {
-        return level;
-    }
-
-    public void setLevel(int level) {
-        this.level = level;
-    }
-
-    // Getter and Setter for xp
-    public long getXp() {
-        return xp;
-    }
-
-    public void setXp(long xp) {
-        this.xp = xp;
-    }
-
-    // Getter and Setter for controlstation
-    public String getControlstation() {
-        return controlstation;
-    }
-
-    public void setControlstation(String controlstation) {
-        this.controlstation = controlstation;
-    }
-
-    // Getter and Setter for controlstation_placed
-    public boolean isControlstation_placed() {
-        return controlstation_placed;
-    }
-
-    public void setControlstation_placed(boolean controlstation_placed) {
-        this.controlstation_placed = controlstation_placed;
-    }
-
-    // Getter and Setter for collected_gems
-    public long getCollected_gems() {
-        return collected_gems;
-    }
-
-    public void setCollected_gems(long collected_gems) {
-        this.collected_gems = collected_gems;
-    }
-
-    // Add method for collected_gems
-    public void addCollected_gems(long amount) {
-        this.collected_gems += amount;
-    }
-
-    // Remove method for collected_gems
-    public void removeCollected_gems(long amount) {
-        this.collected_gems = Math.max(0, this.collected_gems - amount);
-    }
-
-    // Getter and Setter for collected_money
-    public long getCollected_money() {
-        return collected_money;
-    }
-
-    public void setCollected_money(long collected_money) {
-        this.collected_money = collected_money;
-    }
-
-    // Add method for collected_money
-    public void addCollected_money(long amount) {
-        this.collected_money += amount;
-    }
-
-    // Remove method for collected_money
-    public void removeCollected_money(long amount) {
-        this.collected_money = Math.max(0, this.collected_money - amount);
-    }
-
-    // Getter and Setter for collected_crates
-    public int getCollected_crates() {
-        return collected_crates;
-    }
-
-    public void setCollected_crates(int collected_crates) {
-        this.collected_crates = collected_crates;
-    }
-
-    // Add method for collected_crates
-    public void addCollected_crates(int amount) {
-        this.collected_crates += amount;
-    }
-
-    // Remove method for collected_crates
-    public void removeCollected_crates(int amount) {
-        this.collected_crates = Math.max(0, this.collected_crates - amount);
-    }
-
-    // Getter and Setter for collected_xp
-    public long getCollected_xp() {
-        return collected_xp;
-    }
-
-    public void setCollected_xp(long collected_xp) {
-        this.collected_xp = collected_xp;
-    }
-
-    // Add method for collected_xp
-    public void addCollected_xp(long amount) {
-        this.collected_xp += amount;
-    }
-
-    // Remove method for collected_xp
-    public void removeCollected_xp(long amount) {
-        this.collected_xp = Math.max(0, this.collected_xp - amount);
-    }
-
-    public void setClan(String clan) {
-        this.clan = clan;
-    }
-
+    // Methods for Money
     public long getMoney() {
-        return money;
+        return getLongValue("Money");
     }
-
-    public void setMoney(long money) {
-        this.money = money;
-    }
-
-    public long getCredits() {
-        return credits;
-    }
-
-    public void setCredits(long credits) {
-        this.credits = credits;
-    }
-
-    public long getGems() {
-        return gems;
-    }
-
-    public void setGems(long gems) {
-        this.gems = gems;
-    }
-
-    public boolean isLinked() {
-        return linked;
-    }
-
-
-    public String isLinkedString() {
-        if(isLinked()) {
-            return "§a§a✔";
-
-        } else return "§c§l✖";
-    }
-
-    public void setLinked(boolean linked) {
-        this.linked = linked;
-    }
-
-    public long getWoodCutting() {
-        return woodCutting;
-    }
-
-    public void setWoodCutting(long woodCutting) {
-        this.woodCutting = woodCutting;
-    }
-
-    public long getBlocks() {
-        return blocks;
-    }
-
-    public void setBlocks(long blocks) {
-        this.blocks = blocks;
-    }
-
-    public long getFishing() {
-        return fishing;
-    }
-
-    public void setFishing(long fishing) {
-        this.fishing = fishing;
-    }
-
-    public long getPveKills() {
-        return pveKills;
-    }
-
-    public void setPveKills(long pveKills) {
-        this.pveKills = pveKills;
-    }
-
-    public int getKills() {
-        return kills;
-    }
-
-    public void setKills(int kills) {
-        this.kills = kills;
-    }
-
-    public int getDeaths() {
-        return deaths;
-    }
-
-    public void setDeaths(int deaths) {
-        this.deaths = deaths;
-    }
-
-    public int getKillstreak() {
-        return killstreak;
-    }
-
-    public void setKillstreak(int killstreak) {
-        this.killstreak = killstreak;
-    }
-
-    public int getBans() {
-        return bans;
-    }
-
-    public void setBans(int bans) {
-        this.bans = bans;
-    }
-
-    public int getMutes() {
-        return mutes;
-    }
-
-    public void setMutes(int mutes) {
-        this.mutes = mutes;
-    }
-
-    public int getWarnsTotal() {
-        return warnsTotal;
-    }
-
-    public void setWarnsTotal(int warnsTotal) {
-        this.warnsTotal = warnsTotal;
-    }
-
-    public int getWarnsNow() {
-        return warnsNow;
-    }
-
-    public void setWarnsNow(int warnsNow) {
-        this.warnsNow = warnsNow;
-    }
-
-    public long getPlaytime() {
-        return playtime;
-    }
-
-    public void setPlaytime(long playtime) {
-        this.playtime = playtime;
-    }
-
-    // Add and remove methods
 
     public void addMoney(long amount) {
-        setMoney(getMoney() + amount);
+        updateLongValue("Money", getMoney() + amount);
     }
 
     public void removeMoney(long amount) {
-        setMoney(Math.max(0, getMoney() - amount));
+        updateLongValue("Money", getMoney() - amount);
     }
 
-    public void addCredits(long amount) {
-        setCredits(getCredits() + amount);
+    public void setMoney(long amount) {
+        updateLongValue("Money", amount);
     }
 
-    public void removeCredits(long amount) {
-        setCredits(Math.max(0, getCredits() - amount));
+    // Methods for Saphirus
+    public long getSaphirus() {
+        return getLongValue("Saphirus");
+    }
+
+    public void addSaphirus(long amount) {
+        updateLongValue("Saphirus", getSaphirus() + amount);
+    }
+
+    public void removeSaphirus(long amount) {
+        updateLongValue("Saphirus", getSaphirus() - amount);
+    }
+
+    public void setSaphirus(long amount) {
+        updateLongValue("Saphirus", amount);
+    }
+
+    // Methods for Gems
+    public long getGems() {
+        return getLongValue("Gems");
     }
 
     public void addGems(long amount) {
-        setGems(getGems() + amount);
+        updateLongValue("Gems", getGems() + amount);
     }
 
     public void removeGems(long amount) {
-        setGems(Math.max(0, getGems() - amount));
+        updateLongValue("Gems", getGems() - amount);
+    }
+
+    public void setGems(long amount) {
+        updateLongValue("Gems", amount);
+    }
+
+    // Methods for WoodCutting
+    public long getWoodCutting() {
+        return getLongValue("WoodCutting");
     }
 
     public void addWoodCutting(long amount) {
-        setWoodCutting(getWoodCutting() + amount);
+        updateLongValue("WoodCutting", getWoodCutting() + amount);
     }
 
     public void removeWoodCutting(long amount) {
-        setWoodCutting(Math.max(0, getWoodCutting() - amount));
+        updateLongValue("WoodCutting", getWoodCutting() - amount);
+    }
+
+    public void setWoodCutting(long amount) {
+        updateLongValue("WoodCutting", amount);
+    }
+
+    // Methods for Blocks
+    public long getBlocks() {
+        return getLongValue("Blocks");
     }
 
     public void addBlocks(long amount) {
-        setBlocks(getBlocks() + amount);
+        updateLongValue("Blocks", getBlocks() + amount);
     }
 
     public void removeBlocks(long amount) {
-        setBlocks(Math.max(0, getBlocks() - amount));
+        updateLongValue("Blocks", getBlocks() - amount);
+    }
+
+    public void setBlocks(long amount) {
+        updateLongValue("Blocks", amount);
+    }
+
+    // Methods for Fishing
+    public long getFishing() {
+        return getLongValue("Fishing");
     }
 
     public void addFishing(long amount) {
-        setFishing(getFishing() + amount);
+        updateLongValue("Fishing", getFishing() + amount);
     }
 
     public void removeFishing(long amount) {
-        setFishing(Math.max(0, getFishing() - amount));
+        updateLongValue("Fishing", getFishing() - amount);
     }
 
-    public void addPVE_KILLS(long amount) {
-        setPveKills(getPveKills() + amount);
+    public void setFishing(long amount) {
+        updateLongValue("Fishing", amount);
     }
 
-    public void removePVE_KILLS(long amount) {
-        setPveKills(Math.max(0, getPveKills() - amount));
+    // Methods for PVE_Kills
+    public long getPVEKills() {
+        return getLongValue("PVE_KILLS");
+    }
+
+    public void addPVEKills(long amount) {
+        updateLongValue("PVE_KILLS", getPVEKills() + amount);
+    }
+
+    public void removePVEKills(long amount) {
+        updateLongValue("PVE_KILLS", getPVEKills() - amount);
+    }
+
+    public void setPVEKills(long amount) {
+        updateLongValue("PVE_KILLS", amount);
+    }
+
+    // Methods for Kills
+    public int getKills() {
+        return getIntValue("Kills");
     }
 
     public void addKills(int amount) {
-        setKills(getKills() + amount);
+        updateLongValue("Kills", getKills() + amount);
     }
 
     public void removeKills(int amount) {
-        setKills(Math.max(0, getKills() - amount));
+        updateLongValue("Kills", getKills() - amount);
+    }
+
+    public void setKills(int amount) {
+        updateLongValue("Kills", amount);
+    }
+
+    // Methods for Deaths
+    public int getDeaths() {
+        return getIntValue("Deaths");
     }
 
     public void addDeaths(int amount) {
-        setDeaths(getDeaths() + amount);
+        updateLongValue("Deaths", getDeaths() + amount);
     }
 
     public void removeDeaths(int amount) {
-        setDeaths(Math.max(0, getDeaths() - amount));
+        updateLongValue("Deaths", getDeaths() - amount);
+    }
+
+    public void setDeaths(int amount) {
+        updateLongValue("Deaths", amount);
+    }
+
+    // Methods for Killstreak
+    public int getKillstreak() {
+        return getIntValue("Killstreak");
     }
 
     public void addKillstreak(int amount) {
-        setKillstreak(getKillstreak() + amount);
+        updateLongValue("Killstreak", getKillstreak() + amount);
     }
 
     public void removeKillstreak(int amount) {
-        setKillstreak(Math.max(0, getKillstreak() - amount));
+        updateLongValue("Killstreak", getKillstreak() - amount);
+    }
+
+    public void setKillstreak(int amount) {
+        updateLongValue("Killstreak", amount);
+    }
+
+    // Methods for Bans
+    public int getBans() {
+        return getIntValue("Bans");
     }
 
     public void addBans(int amount) {
-        setBans(getBans() + amount);
+        updateLongValue("Bans", getBans() + amount);
     }
 
     public void removeBans(int amount) {
-        setBans(Math.max(0, getBans() - amount));
+        updateLongValue("Bans", getBans() - amount);
+    }
+
+    public void setBans(int amount) {
+        updateLongValue("Bans", amount);
+    }
+
+    // Methods for Mutes
+    public int getMutes() {
+        return getIntValue("Mutes");
     }
 
     public void addMutes(int amount) {
-        setMutes(getMutes() + amount);
+        updateLongValue("Mutes", getMutes() + amount);
     }
 
     public void removeMutes(int amount) {
-        setMutes(Math.max(0, getMutes() - amount));
+        updateLongValue("Mutes", getMutes() - amount);
     }
 
-    public void addWarns_Total(int amount) {
-        setWarnsTotal(getWarnsTotal() + amount);
+    public void setMutes(int amount) {
+        updateLongValue("Mutes", amount);
     }
 
-    public void removeWarns_Total(int amount) {
-        setWarnsTotal(Math.max(0, getWarnsTotal() - amount));
+    // Methods for Warns_Total
+    public int getWarnsTotal() {
+        return getIntValue("Warns_Total");
     }
 
-    public void addWarns_Now(int amount) {
-        setWarnsNow(getWarnsNow() + amount);
+    public void addWarnsTotal(int amount) {
+        updateLongValue("Warns_Total", getWarnsTotal() + amount);
     }
 
-    public void removeWarns_Now(int amount) {
-        setWarnsNow(Math.max(0, getWarnsNow() - amount));
+    public void removeWarnsTotal(int amount) {
+        updateLongValue("Warns_Total", getWarnsTotal() - amount);
+    }
+
+    public void setWarnsTotal(int amount) {
+        updateLongValue("Warns_Total", amount);
+    }
+
+    // Methods for Warns_Now
+    public int getWarnsNow() {
+        return getIntValue("Warns_Now");
+    }
+
+    public void addWarnsNow(int amount) {
+        updateLongValue("Warns_Now", getWarnsNow() + amount);
+    }
+
+    public void removeWarnsNow(int amount) {
+        updateLongValue("Warns_Now", getWarnsNow() - amount);
+    }
+
+    public void setWarnsNow(int amount) {
+        updateLongValue("Warns_Now", amount);
+    }
+
+    // Methods for JoinDate
+    public String getJoinDate() {
+        return getStringValue("JoinDate");
+    }
+
+    public void setJoinDate(String date) {
+        updateStringValue("JoinDate", date);
+    }
+
+    public boolean isLinked() {
+        return (boolean) getPlayerData().get("Linked");
+    }
+
+    public void setLinked(boolean linked) {
+        getPlayerData().put("Linked", linked);
+    }
+
+    // Methods for Team
+    public String getTeam() {
+            return (String) getPlayerData().get("Team");
+    }
+
+    public boolean inTeam() {
+        String name = (String) getPlayerData().get("Team");
+        return name.equalsIgnoreCase("none");
+    }
+
+    public void setTeam(String team) {
+        getPlayerData().put("Team", team);
     }
 
 
-    public void updateAllValuesPlayer() {
-        updateAllValuesGenPlayer();
-        String query = "UPDATE PlayerData SET " +
-                "Name=?, Clan=?, Money=?, Credits=?, Gems=?, Linked=?, WoodCutting=?, Blocks=?, " +
-                "Fishing=?, PVE_KILLS=?, Kills=?, Deaths=?, Killstreak=?, Playtime=? WHERE UUID=?";
-
-        try (PreparedStatement statement = connection.prepareStatement(query)) {
-
-            TempPlayerCache playerData = this;
-
-            statement.setString(1, playerData.getName());
-            statement.setString(2, playerData.getClan());
-            statement.setLong(3, playerData.getMoney());
-            statement.setLong(4, playerData.getCredits());
-            statement.setLong(5, playerData.getGems());
-            statement.setBoolean(6, playerData.isLinked());
-            statement.setLong(7, playerData.getWoodCutting());
-            statement.setLong(8, playerData.getBlocks());
-            statement.setLong(9, playerData.getFishing());
-            statement.setLong(10, playerData.getPveKills());
-            statement.setInt(11, playerData.getKills());
-            statement.setInt(12, playerData.getDeaths());
-            statement.setInt(13, playerData.getKillstreak());
-            statement.setLong(14, playerData.getPlaytime());
-            statement.setString(15, playerData.getUUID());
-
-            statement.addBatch();
-
-
-            int[] updateCounts = statement.executeBatch();
-            // Handle the updateCounts array if needed
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    // Methods for Playtime
+    public long getPlaytime() {
+        return getLongValue("Playtime");
     }
 
-    public void updateAllValuesGenPlayer() {
-        String query = "UPDATE Saphirus_GenPlayer SET " +
-                "Multiplier=?, Gens=?, Level=?, XP=?, ControlStation=?, " +
-                "ControlStationPlaced=?, ControlStation_Collected_Gems=?, ControlStation_Collected_Money=?, " +
-                "ControlStation_Collected_Crates=?, ControlStation_Collected_XP=? WHERE UUID=?";
+    public void addPlaytime(long amount) {
+        updateLongValue("Playtime", getPlaytime() + amount);
+    }
 
-        try (PreparedStatement statement = connection.prepareStatement(query)) {
-            TempPlayerCache playerData = this;
+    public void removePlaytime(long amount) {
+        updateLongValue("Playtime", getPlaytime() - amount);
+    }
 
-            statement.setDouble(1, playerData.getMultiplier());
-            statement.setString(2, playerData.getGens());
-            statement.setInt(3, playerData.getLevel());
-            statement.setLong(4, playerData.getXp());
-            statement.setString(5, playerData.getControlstation());
-            statement.setBoolean(6, playerData.isControlstation_placed());
-            statement.setLong(7, playerData.getCollected_gems());
-            statement.setLong(8, playerData.getCollected_money());
-            statement.setInt(9, playerData.getCollected_crates());
-            statement.setLong(10, playerData.getCollected_xp());
-            statement.setString(11, playerData.getUUID());
-
-            statement.addBatch();
-
-            int[] updateCounts = statement.executeBatch();
-            // Handle the updateCounts array if needed
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    public void setPlaytime(long amount) {
+        updateLongValue("Playtime", amount);
     }
 
     public static void updateAllValuesInDatabase() {
+        String updateQuery = "UPDATE PlayerData SET " +
+                "Name = ?, Team = ?, Money = ?, Saphirus = ?, Gems = ?, Linked = ?, WoodCutting = ?, " +
+                "Blocks = ?, Fishing = ?, PVE_KILLS = ?, Kills = ?, Deaths = ?, Killstreak = ?, " +
+                "Bans = ?, Mutes = ?, Warns_Total = ?, Warns_Now = ?, Playtime = ? " +
+                "WHERE UUID = ?";
 
-        String query = "UPDATE PlayerData SET " +
-                "Name=?, Clan=?, Money=?, Credits=?, Gems=?, Linked=?, WoodCutting=?, Blocks=?, " +
-                "Fishing=?, PVE_KILLS=?, Kills=?, Deaths=?, Killstreak=?, Playtime=? WHERE UUID=?";
+        try (Connection connection = sql.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(updateQuery)) {
 
-        String genQuery = "UPDATE Saphirus_GenPlayer SET " +
-                "Multiplier=?, Gens=?, Level=?, XP=?, ControlStation=?, " +
-                "ControlStationPlaced=?, ControlStation_Collected_Gems=?, ControlStation_Collected_Money=?, " +
-                "ControlStation_Collected_Crates=?, ControlStation_Collected_XP=? WHERE UUID=?";
+            int batchSize = 1000; // Adjust the batch size as needed
+            int count = 0;
 
-        try (PreparedStatement statementPlayer = connection.prepareStatement(query);
-             PreparedStatement statementGenPlayer = connection.prepareStatement(genQuery)) {
-            for (Map.Entry<String, TempPlayerCache> entry : data.entrySet()) {
-                TempPlayerCache playerData = entry.getValue();
+            for (HashMap.Entry<String, HashMap<String, Object>> entry : playerDataCache.entrySet()) {
+                String uuid = entry.getKey();
+                Map<String, Object> data = entry.getValue();
 
-                // Update PlayerData
-                statementPlayer.setString(1, playerData.getName());
-                statementPlayer.setString(2, playerData.getClan());
-                statementPlayer.setLong(3, playerData.getMoney());
-                statementPlayer.setLong(4, playerData.getCredits());
-                statementPlayer.setLong(5, playerData.getGems());
-                statementPlayer.setBoolean(6, playerData.isLinked());
-                statementPlayer.setLong(7, playerData.getWoodCutting());
-                statementPlayer.setLong(8, playerData.getBlocks());
-                statementPlayer.setLong(9, playerData.getFishing());
-                statementPlayer.setLong(10, playerData.getPveKills());
-                statementPlayer.setInt(11, playerData.getKills());
-                statementPlayer.setInt(12, playerData.getDeaths());
-                statementPlayer.setInt(13, playerData.getKillstreak());
-                statementPlayer.setLong(14, playerData.getPlaytime());
-                statementPlayer.setString(15, playerData.getUUID());
+                preparedStatement.setString(1, (String) data.get("Name"));
+                preparedStatement.setString(2, (String) data.get("Team"));
+                preparedStatement.setLong(3, (Long) data.get("Money"));
+                preparedStatement.setLong(4, (Long) data.get("Saphirus"));
+                preparedStatement.setLong(5, (Long) data.get("Gems"));
+                preparedStatement.setBoolean(6, (Boolean) data.get("Linked"));
+                preparedStatement.setLong(7, (Long) data.get("WoodCutting"));
+                preparedStatement.setLong(8, (Long) data.get("Blocks"));
+                preparedStatement.setLong(9, (Long) data.get("Fishing"));
+                preparedStatement.setLong(10, (Long) data.get("PVE_KILLS"));
+                preparedStatement.setInt(11, (Integer) data.get("Kills"));
+                preparedStatement.setInt(12, (Integer) data.get("Deaths"));
+                preparedStatement.setInt(13, (Integer) data.get("Killstreak"));
+                preparedStatement.setInt(14, (Integer) data.get("Bans"));
+                preparedStatement.setInt(15, (Integer) data.get("Mutes"));
+                preparedStatement.setInt(16, (Integer) data.get("Warns_Total"));
+                preparedStatement.setInt(17, (Integer) data.get("Warns_Now"));
+                preparedStatement.setLong(18, (Long) data.get("Playtime"));
+                preparedStatement.setString(19, uuid);
 
-                statementPlayer.addBatch();
+                preparedStatement.addBatch();
 
-                statementGenPlayer.setDouble(1, playerData.getMultiplier());
-                statementGenPlayer.setString(2, playerData.getGens());
-                statementGenPlayer.setInt(3, playerData.getLevel());
-                statementGenPlayer.setLong(4, playerData.getXp());
-                statementGenPlayer.setString(5, playerData.getControlstation());
-                statementGenPlayer.setBoolean(6, playerData.isControlstation_placed());
-                statementGenPlayer.setLong(7, playerData.getCollected_gems());
-                statementGenPlayer.setLong(8, playerData.getCollected_money());
-                statementGenPlayer.setInt(9, playerData.getCollected_crates());
-                statementGenPlayer.setLong(10, playerData.getCollected_xp());
-                statementGenPlayer.setString(11, playerData.getUUID());
-
-                statementGenPlayer.addBatch();
+                if (++count % batchSize == 0) {
+                    preparedStatement.executeBatch();
+                }
             }
-
-            int[] updateCountsPlayer = statementPlayer.executeBatch();
-            int[] updateCountsGenPlayer = statementGenPlayer.executeBatch();
-            // Handle the updateCounts array if needed
+            preparedStatement.executeBatch(); // Execute the remaining batch
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -633,3 +437,4 @@ public class TempPlayerCache {
     }
 
 }
+

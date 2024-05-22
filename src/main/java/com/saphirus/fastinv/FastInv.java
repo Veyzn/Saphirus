@@ -104,6 +104,7 @@ public class FastInv implements InventoryHolder {
         if (this.inventory.getHolder() != this) {
             throw new IllegalStateException("Inventory holder is not FastInv, found: " + this.inventory.getHolder());
         }
+
     }
 
     protected void onOpen(InventoryOpenEvent event) {

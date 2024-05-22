@@ -18,11 +18,11 @@ public class Board {
 
         Scoreboard board = Bukkit.getScoreboardManager().getNewScoreboard();
         Objective obj = board.registerNewObjective("stats", "dummy");
-        TempPlayerCache tpc = TempPlayerCache.data.get(p.getUniqueId().toString());
+        TempPlayerCache tpc = new TempPlayerCache(p.getUniqueId().toString());
 
 //ɪ
         obj.setDisplaySlot(DisplaySlot.SIDEBAR);
-        obj.setDisplayName("§7» §f§l" + Utils.fancy("gen") + "§b§l" + Utils.fancy("labz") +  " §8[§f§lɪ§8] §7«");
+        obj.setDisplayName("§7» §b§lSAPHIRUS §8[§f§lɪ§8] §7«");
 
         //PLAYER
         obj.getScore("").setScore(12);
@@ -50,8 +50,8 @@ public class Board {
 
         obj.getScore("§5").setScore(7);
         Team clan = board.registerNewTeam("clan");
-        clan.setPrefix("  §f➥ §6ᴄʟᴀɴ: §a");
-        clan.setSuffix("§a" + tpc.getClan());
+        clan.setPrefix("  §f➥ §6ᴛᴇᴀᴍ: §a");
+        clan.setSuffix("§a" + tpc.getTeam());
         clan.addEntry("§5");
 
         obj.getScore("§1§2").setScore(6);
@@ -66,7 +66,7 @@ public class Board {
         obj.getScore("§7").setScore(3);
         Team linked = board.registerNewTeam("linked");
         linked.setPrefix("  §f➥ §bʟɪɴᴋᴇᴅ: §b");
-        linked.setSuffix("§c " + tpc.isLinkedString());
+        linked.setSuffix("§c " + Utils.getCheck(tpc.isLinked()));
         linked.addEntry("§7");
 
         obj.getScore("§7§2").setScore(2);
@@ -89,14 +89,14 @@ public class Board {
     public void update(Player p) {
 
         Scoreboard board = p.getScoreboard();
-        TempPlayerCache tpc = TempPlayerCache.data.get(p.getUniqueId().toString());
+        TempPlayerCache tpc = new TempPlayerCache(p.getUniqueId().toString());
 
         p.getScoreboard().getTeam("money").setSuffix("§a" + Maths.shortMoney(tpc.getMoney()));
         p.getScoreboard().getTeam("gems").setSuffix("§2" + Maths.shortMoney(tpc.getGems()));
         p.getScoreboard().getTeam("stats").setSuffix("§a" + Utils.getZahl(tpc.getKills()) + " §8| §c" + Utils.getZahl(tpc.getDeaths()));
-        p.getScoreboard().getTeam("clan").setSuffix("§a" + tpc.getClan());
+        p.getScoreboard().getTeam("clan").setSuffix("§a" + tpc.getTeam());
         p.getScoreboard().getTeam("players").setSuffix("§8(§a" + Bukkit.getOnlinePlayers().size() + " §8| §c250§8)");
-        p.getScoreboard().getTeam("linked").setSuffix("§c " + tpc.isLinkedString());
+        p.getScoreboard().getTeam("linked").setSuffix("§c " + tpc.isLinked());
 
 
 

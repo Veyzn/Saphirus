@@ -1,6 +1,6 @@
 name: Saphirus-System
 version: '${project.version}'
-main: com.saphrius.main.Main
+main: com.saphirus.main.Main
 api-version: '1.19'
 commands:
   gamemode:

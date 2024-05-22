@@ -31,7 +31,7 @@ public class PlayerInfoCMD implements CommandExecutor {
                     p.sendMessage(Data.Prefix + "First Joined: §c" + pc.getJoinDate());
                     p.sendMessage(Data.Prefix + "Playtime: §c" + Utils.convertSecondsToTime((Long) data.get("Playtime")));
                     p.sendMessage(Data.Prefix + "Clan: §c" + data.get("Clan"));
-                    p.sendMessage(Data.Prefix + "Linked: §c" + pc.isLinkedString());
+                    p.sendMessage(Data.Prefix + "Linked: §c" + pc.isLinked());
                     p.sendMessage("");
                     p.sendMessage(Data.Prefix + "Money: §a$" + Utils.getZahl((Long) data.get("Money")));
                     p.sendMessage(Data.Prefix + "Gems: §2" + Utils.getZahl((Long)data.get("Gems")));

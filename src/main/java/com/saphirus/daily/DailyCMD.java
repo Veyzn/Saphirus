@@ -19,7 +19,7 @@ public class DailyCMD implements CommandExecutor {
 
         if(DailyConfig.canClaim(p.getUniqueId().toString())) {
             Bukkit.broadcastMessage(Data.Daily + "The player §c" + p.getName() + "§f has claimed their §c/daily");
-            TempPlayerCache tpc = TempPlayerCache.data.get(p.getUniqueId().toString());
+            TempPlayerCache tpc = new TempPlayerCache(p.getUniqueId().toString());
             DailyConfig.addPlayer(p.getUniqueId().toString(), System.currentTimeMillis() + (1000*60*60*24));
             p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 5.0F, 5.0F);
             switch (Utils.getUserRank(p.getName()).toLowerCase()) {
@@ -27,6 +27,7 @@ public class DailyCMD implements CommandExecutor {
                 case "default" -> {
                     p.sendMessage(Data.Daily + "You received");
                     p.sendMessage(Data.Daily + " §c- §a$50.000");
+
                     p.sendMessage(Data.Daily + " §c- §2500 Gems");
                     tpc.addGems(500L);
                     tpc.addMoney(50000L);

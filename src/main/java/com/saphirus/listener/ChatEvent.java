@@ -20,10 +20,10 @@ public class ChatEvent implements Listener {
         Player p = e.getPlayer();
         String message = e.getMessage().replaceAll("%","%%");
         String clan ="";
-        TempPlayerCache tpc = TempPlayerCache.data.get(p.getUniqueId().toString());
+        TempPlayerCache tpc = new TempPlayerCache(p.getUniqueId().toString());
 
-        if(tpc.inClan()) {
-            clan = "§8x§a" + tpc.getClan();
+        if(tpc.inTeam()) {
+            clan = "§8x§a" + tpc.getTeam();
         }
 
         String chatcolor = "§7";

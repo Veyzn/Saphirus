@@ -10,8 +10,8 @@ public class Data {
 
     public static HashMap<String, Location> teleporting = new HashMap<String, Location>();
 
-    //{"version":2,"colors":["#1488CC","#FFFFFF"],"text":"Saphirus","format":"§x§$1§$2§$3§$4§$5§$6$f$c","formatchar":"&","customFormat":false,"prefix":"","bold":true,"italic":false,"underline":false,"strikethrough":false}
-    public static String Prefix = "§8| §x§1§4§8§8§C§C§lG§x§3§B§9§C§D§5§lE§x§6§2§B§0§D§D§lN§x§8§A§C§4§E§6§lL§x§B§1§D§7§E§E§lA§x§D§8§E§B§F§7§lB§x§F§F§F§F§F§F§lZ §8» §f";
+    //{"version":2,"colors":["#1488CC","#12A5BA"],"text":"SAPHIRUS","format":"§x§$1§$2§$3§$4§$5§$6$f$c","formatchar":"§","customFormat":false,"prefix":"","bold":true,"italic":false,"underline":false,"strikethrough":false}
+    public static String Prefix = "§8| §x§1§4§8§8§C§C§lS§x§1§4§8§C§C§9§lA§x§1§3§9§0§C§7§lP§x§1§3§9§4§C§4§lH§x§1§3§9§9§C§2§lI§x§1§3§9§D§B§F§lR§x§1§2§A§1§B§D§lU§x§1§2§A§5§B§A§lS §8» §f";
     public static String Trade = "§8| §x§0§0§F§F§2§6§lT§x§0§0§F§F§3§6§lR§x§0§0§F§F§4§5§lA§x§0§0§F§F§5§5§lD§x§0§0§F§F§6§4§lE §8» §f";
     public static String noPerms = "§8| §x§F§F§0§0§0§0§lE§x§D§D§0§4§0§4§lR§x§B§A§0§8§0§8§lR§x§9§8§0§B§0§B§lO§x§7§5§0§F§0§F§lR §8» §fYou are not allowed to do that!";
     public static String Usage = "§8| §x§0§0§C§1§F§F§lU§x§0§0§D§1§F§F§lS§x§0§0§E§0§F§F§lA§x§0§0§F§0§F§F§lG§x§0§0§F§F§F§F§lE §8» §fPlease use: §c";

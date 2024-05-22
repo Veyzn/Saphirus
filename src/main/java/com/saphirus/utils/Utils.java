@@ -213,6 +213,13 @@ public static String isBigger(long bigger, long then) {
 		} else return "§c§l✖";
 	}
 
+	public static String getCheck(boolean status) {
+		if (status) {
+			return "§a§a✔";
+
+		} else return "§c§l✖";
+	}
+
 
 	public static String fancy(String input) {
 		char[] chars = input.toLowerCase().toCharArray();

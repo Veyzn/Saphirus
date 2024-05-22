@@ -100,9 +100,9 @@ public class MySQL {
             String createTableQuery = "CREATE TABLE IF NOT EXISTS PlayerData (" +
                     "UUID CHAR(36) PRIMARY KEY," +
                     "Name VARCHAR(255)," +
-                    "Clan VARCHAR(255),"+
+                    "Team VARCHAR(255),"+
                     "Money BIGINT,"+
-                    "Credits BIGINT," +
+                    "Saphirus BIGINT," +
                     "Gems BIGINT," +
                     "Linked BOOLEAN," +
                     "WoodCutting BIGINT," +
@@ -145,32 +145,6 @@ public class MySQL {
             preparedStatement.close();
         } catch (SQLException e) {
             System.err.println("Error while creating Ban table: " + e.getMessage());
-        }
-    }
-
-    public void createGenPlayerTable() {
-        try {
-            String createTableQuery = "CREATE TABLE IF NOT EXISTS Saphirus_GenPlayer (" +
-                    "UUID CHAR(36) PRIMARY KEY," +
-                    "Name VARCHAR(255)," +
-                    "Multiplier DOUBLE," +
-                    "Gens LONGTEXT," +
-                    "Level INT," +
-                    "XP BIGINT," +
-                    "ControlStation LONGTEXT," +
-                    "ControlStationPlaced BOOLEAN," +
-                    "ControlStation_Collected_Gems BIGINT," +
-                    "ControlStation_Collected_Money BIGINT," +
-                    "ControlStation_Collected_Crates INT," +
-                    "ControlStation_Collected_XP BIGINT," +
-                    "Friends LONGTEXT"+
-                    ")";
-
-            PreparedStatement preparedStatement = connection.prepareStatement(createTableQuery);
-            preparedStatement.executeUpdate();
-            preparedStatement.close();
-        } catch (SQLException e) {
-            System.err.println("Error while creating Gen table: " + e.getMessage());
         }
     }
 
@@ -249,39 +223,6 @@ public class MySQL {
         }
 
         return placementMap;
-    }
-
-    public HashMap<String, Object> getGenPlayerData(String uuid) {
-        HashMap<String, Object> playerData = new HashMap<>();
-        try {
-            String query = "SELECT * FROM Saphirus_GenPlayer WHERE UUID = ?";
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setString(1, uuid);
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-            if (resultSet.next()) {
-                playerData.put("UUID", resultSet.getString("UUID"));
-                playerData.put("Name", resultSet.getString("Name"));
-                playerData.put("Multiplier", resultSet.getDouble("Multiplier"));
-                playerData.put("Gens", resultSet.getString("Gens"));
-                playerData.put("Level", resultSet.getInt("Level"));
-                playerData.put("XP", resultSet.getLong("XP"));
-                playerData.put("ControlStation", resultSet.getString("ControlStation"));
-                playerData.put("ControlStationPlaced", resultSet.getBoolean("ControlStationPlaced"));
-                playerData.put("ControlStation_Collected_Gems", resultSet.getLong("ControlStation_Collected_Gems"));
-                playerData.put("ControlStation_Collected_Money", resultSet.getLong("ControlStation_Collected_Money"));
-                playerData.put("ControlStation_Collected_Crates", resultSet.getInt("ControlStation_Collected_Crates"));
-                playerData.put("ControlStation_Collected_XP", resultSet.getLong("ControlStation_Collected_XP"));
-                // Add more fields here if needed
-            }
-
-            resultSet.close();
-            preparedStatement.close();
-        } catch (SQLException e) {
-            System.err.println("Error while retrieving player data: " + e.getMessage());
-        }
-
-        return playerData;
     }
 
     public HashMap<String, Object> getPlayerData(String uuid) {
