@@ -27,12 +27,15 @@ public final class Main extends JavaPlugin {
     public static Plugin instance;
     public static Main main;
     public static MySQL sql = new MySQL();
+
+    public RMain rmain;
+
     @Override
     public void onEnable() {
         main = this;
         instance = this;
         sql.connectToDatabase();
-        new RMain( this ); // Please keep this immediately after the line that connects to the SQL database <3
+        rmain = new RMain( this ); // Please keep this immediately after the line that connects to the SQL database <3
 
         ConfigurationSerialization.registerClass(CrateItem.class);
         create();
@@ -45,6 +48,7 @@ public final class Main extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        rmain.onDisable(); // Ryan's onDisable method
     }
 
 

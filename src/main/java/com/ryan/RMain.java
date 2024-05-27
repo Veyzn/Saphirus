@@ -19,4 +19,9 @@ public class RMain {
         sql = Main.sql;
     }
 
+    // This will be treated as the onDisable method
+    public void onDisable() {
+
+    }
+
 }
