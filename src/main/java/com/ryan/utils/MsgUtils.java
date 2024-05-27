@@ -129,6 +129,11 @@ public class MsgUtils {
 //        );
     }
 
+    public static String getColoredAsString( String ... str ) {
+        TextComponent component = colored( str );
+        return LegacyComponentSerializer.legacySection().serialize( component );
+    }
+
     /**
      * Adds color to an input string and sends it to a command sender
      * @param sender the command sender
