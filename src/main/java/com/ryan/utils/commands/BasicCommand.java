@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Used to easily create a command that can then be registered to the server.
  *
- * @author CyberRyan1
+ * @author CyberRyan
  */
 public abstract class BasicCommand extends CommandModel implements CommandExecutor, TabCompleter {
 

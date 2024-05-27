@@ -11,7 +11,7 @@ import org.bukkit.entity.Player;
  * Allows for one to easily get the arguments of the executed command into a specified
  * type.
  *
- * @author CyberRyan1
+ * @author CyberRyan
  */
 public class SentCommand {
 
