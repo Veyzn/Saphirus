@@ -361,7 +361,9 @@ public class TempPlayerCache {
 
     public boolean inTeam() {
         String name = (String) getPlayerData().get("Team");
-        return name.equalsIgnoreCase("none");
+        if(!name.equalsIgnoreCase("none")) {
+            return true;
+        } else return false;
     }
 
     public void setTeam(String team) {

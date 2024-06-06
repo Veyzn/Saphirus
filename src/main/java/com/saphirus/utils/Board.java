@@ -22,7 +22,7 @@ public class Board {
 
 //ɪ
         obj.setDisplaySlot(DisplaySlot.SIDEBAR);
-        obj.setDisplayName("§7» §b§lSAPHIRUS §8[§f§lɪ§8] §7«");
+        obj.setDisplayName("§7» §x§1§2§A§5§B§A§lSAPHIRUS §8[§f§lɪ§8] §7«");
 
         //PLAYER
         obj.getScore("").setScore(12);
@@ -96,7 +96,7 @@ public class Board {
         p.getScoreboard().getTeam("stats").setSuffix("§a" + Utils.getZahl(tpc.getKills()) + " §8| §c" + Utils.getZahl(tpc.getDeaths()));
         p.getScoreboard().getTeam("clan").setSuffix("§a" + tpc.getTeam());
         p.getScoreboard().getTeam("players").setSuffix("§8(§a" + Bukkit.getOnlinePlayers().size() + " §8| §c250§8)");
-        p.getScoreboard().getTeam("linked").setSuffix("§c " + tpc.isLinked());
+        p.getScoreboard().getTeam("linked").setSuffix("§c " + Utils.getCheck(tpc.isLinked()));
 
 
 

@@ -8,9 +8,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.HashMap;
-
-import java.util.Map;
 
 public class PlayerCache {
     private String uuid;
@@ -42,7 +41,7 @@ public class PlayerCache {
             preparedStatement.setInt(16, 0); // Mutes
             preparedStatement.setInt(17, 0); // Warns_Total
             preparedStatement.setInt(18, 0); // Warns_Now
-            preparedStatement.setString(19, ""); // JoinDate
+            preparedStatement.setString(19, new Date().toString()); // JoinDate
             preparedStatement.setLong(20, 0); // Playtime
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
