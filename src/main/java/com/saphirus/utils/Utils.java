@@ -6,6 +6,7 @@ import net.luckperms.api.model.group.Group;
 import net.luckperms.api.model.user.User;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -384,5 +385,22 @@ public static String isBigger(long bigger, long then) {
 			}
 
 		}
+	}
+
+	public static  String getUUID(String playerName) {
+		// First check if the player is online
+		Player onlinePlayer = Bukkit.getPlayer(playerName);
+		if (onlinePlayer != null) {
+			return onlinePlayer.getUniqueId().toString();
+		}
+
+		// If the player is not online, check offline
+		OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(playerName);
+		if (offlinePlayer.hasPlayedBefore()) {
+			return offlinePlayer.getUniqueId().toString();
+		}
+
+		// If the player has never played on this server
+		return null;
 	}
 }

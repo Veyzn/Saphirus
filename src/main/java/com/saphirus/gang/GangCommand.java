@@ -4,6 +4,8 @@ import com.saphirus.main.Data;
 import com.saphirus.main.Main;
 import com.saphirus.utils.TempPlayerCache;
 import com.saphirus.utils.Utils;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -15,11 +17,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
 public class GangCommand implements CommandExecutor, TabCompleter {
 
+
+    public static HashMap<String, ArrayList<String>> invited = new HashMap<>();
     ArrayList<String> disbandPlayer = new ArrayList<>();
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
@@ -133,6 +138,55 @@ public class GangCommand implements CommandExecutor, TabCompleter {
                             } else p.sendMessage(Data.Gang + "This name is invalid. Maximum of 5 letters and numbers.");
                         }
                     }
+
+                    case "kick" -> {
+                        if(tpc.inTeam()) {
+                            if(isOwner(gm, p.getUniqueId().toString())) {
+                                if(Utils.getUUID(args[1]) != null) {
+                                    String target_uuid = Utils.getUUID(args[1]);
+                                    TempPlayerCache ttc = new TempPlayerCache(target_uuid);
+                                    if(gm.getMembers().contains(target_uuid)) {
+                                        gm.removeMember(target_uuid);
+                                        ttc.setTeam("none");
+                                        gm.sendGangMessage("The player §c" + ttc.getName() + " §ahas been kicked!");
+                                    } else p.sendMessage(Data.Gang + "This player is not in your gang!");
+                                } else p.sendMessage(Data.Gang + "This player does not exist");
+                            } else sendNotOwner(p);
+                        } else sendNotInGang(p);
+                    }
+                    case "invite" -> {
+                        if(tpc.inTeam()) {
+                            if(isOwner(gm, p.getUniqueId().toString())) {
+                                if(Bukkit.getPlayer(args[1]) != null) {
+                                    Player t = Bukkit.getPlayer(args[1]);
+                                    TempPlayerCache ttc = new TempPlayerCache(t.getUniqueId().toString());
+                                    if(gm.getMembers().size() > 4) {
+                                        if(!ttc.inTeam()) {
+                                            if(!invited.containsValue(t.getUniqueId().toString()) || !invited.get(t.getUniqueId().toString()).contains(gm.getName())) {
+
+                                                TextComponent message = new TextComponent(Data.Gang + "The gang §c " + gm.getName() + " §finvited you to! Click");
+
+                                                // Create the clickable part
+                                                TextComponent clickablePart = new TextComponent("§a§lHERE");
+                                                clickablePart.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/gang join " + gm.getName()));
+
+                                                // Combine the components
+                                                message.addExtra(clickablePart);
+                                                message.addExtra(" §fto join the gang");
+
+                                                t.spigot().sendMessage(message);
+
+                                            } else p.sendMessage(Data.Gang + "You already invited this player!");
+                                        } else p.sendMessage(Data.Gang + "This player is already in a gang!");
+                                    } else p.sendMessage(Data.Gang + "Your gang already reached the maximum of 4 members!");
+                                } else p.sendMessage(Data.Gang + "This player does not exist");
+                            } else sendNotOwner(p);
+                        } else sendNotInGang(p);
+                    }
+
+                    case "join" -> {
+
+                    }
                 }
             }
 
@@ -145,14 +199,14 @@ public class GangCommand implements CommandExecutor, TabCompleter {
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
         List<String> default_completer = new ArrayList<>();
-        default_completer.add("create");
-        default_completer.add("disband");
-        default_completer.add("kick");
+        default_completer.add("create"); //DONE
+        default_completer.add("disband"); //DONE
+        default_completer.add("kick"); //DONE
         default_completer.add("invite");
         default_completer.add("kick");
         default_completer.add("join");
-        default_completer.add("leave");
-        default_completer.add("stats");
+        default_completer.add("leave"); //DONE
+        default_completer.add("stats"); //DONE
         default_completer.add("deposit");
         default_completer.add("withdraw");
         default_completer.add("trophies");
