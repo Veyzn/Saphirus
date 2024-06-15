@@ -44,7 +44,6 @@ public class CrateManager {
     }
 
     public boolean exists(){return file.exists();}
-
     public void create() {
         if(!ordner.exists()) {
             ordner.mkdir();

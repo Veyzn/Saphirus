@@ -1,11 +1,16 @@
 package com.saphirus.gang;
 
+import com.saphirus.main.Data;
+import com.saphirus.utils.TempPlayerCache;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class GangManager {
 
@@ -15,7 +20,7 @@ public class GangManager {
 
     public GangManager(String names) {
         name = names;
-        file = new File("plugins/Saphirus/Gang/" + name + ".yml");
+        file = new File("plugins/Saphirus/Gangs/" + name.toLowerCase() + ".yml");
         cfg = YamlConfiguration.loadConfiguration(file);
     }
 
@@ -38,6 +43,17 @@ public class GangManager {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void disband() {
+        if(!getEveryone().isEmpty()) {
+            for(String uuid : getEveryone()) {
+                TempPlayerCache tpc = new TempPlayerCache(uuid);
+                tpc.setTeam("none");
+            }
+        }
+
+        file.delete();
     }
 
     public String getName() {
@@ -121,6 +137,31 @@ public class GangManager {
             cfg.save(file);
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    public List<String> getEveryone() {
+        List<String> everyone = getMembers();
+        everyone.add(getOwner());
+        return everyone;
+    }
+
+    public void sendPlayerGangMessage(String uuid, String message) {
+        Player p = Bukkit.getPlayer(UUID.fromString(uuid));
+        for(String everyone : getEveryone()) {
+            Player every = Bukkit.getPlayer(UUID.fromString(everyone));
+            if(every != null && p != null) {
+                every.sendMessage(Data.Gang + "§c" + p.getName() + ": §a" + message.replace("#", ""));
+            }
+        }
+    }
+
+    public void sendGangMessage(String message) {
+        for(String everyone : getEveryone()) {
+            Player every = Bukkit.getPlayer(UUID.fromString(everyone));
+            if(every != null) {
+                every.sendMessage(Data.Gang + "§a" + message);
+            }
         }
     }
 }

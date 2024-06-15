@@ -23,7 +23,7 @@ public class ChatEvent implements Listener {
         TempPlayerCache tpc = new TempPlayerCache(p.getUniqueId().toString());
 
         if(tpc.inTeam()) {
-            clan = "§8x§a" + tpc.getTeam();
+            clan = "§a" + tpc.getTeam() + "§8x";
         }
 
         String chatcolor = "§7";
@@ -57,7 +57,7 @@ public class ChatEvent implements Listener {
             }
         }
 
-        e.setFormat("§8(" + Utils.getGroupPrefix(Utils.getUserRank(p.getName())) + "§8)" + clan + " §f" + p.getName() + " §8» " + chatcolor + message) ;
+        e.setFormat("§8(" + Utils.getGroupPrefix(Utils.getUserRank(p.getName())) + "§8) " + clan + "§f" + p.getName() + " §8» " + chatcolor + message) ;
 
     }
 }

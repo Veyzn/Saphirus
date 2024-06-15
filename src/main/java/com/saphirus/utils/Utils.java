@@ -12,8 +12,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
+import java.io.File;
 import java.text.DecimalFormat;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -170,6 +172,17 @@ public class Utils {
 		if (p != null) {
 			return "§a" + p.getName();
 		} else return "§c" + player;
+
+
+	}
+
+	public static String OnOffTest(UUID uuid) {
+
+		Player p = Bukkit.getPlayer(uuid);
+
+		if (p != null) {
+			return "§a" + p.getName();
+		} else return "§c" + new PlayerCache(uuid.toString()).getName();
 
 
 	}
@@ -360,5 +373,16 @@ public static String isBigger(long bigger, long then) {
 	// Helper method to check if a slot corresponds to the off-hand (second-hand)
 	private static boolean isOffHandSlot(PlayerInventory playerInventory, int slot) {
 		return slot == 45;
+	}
+
+
+	public static void createFolders() {
+		for(String folder: List.of("Crates", "Gangs")) {
+			File ordner = new File("plugins/Saphirus/" + folder + "/");
+			if(!ordner.exists()) {
+				ordner.mkdir();
+			}
+
+		}
 	}
 }
