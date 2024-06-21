@@ -14,6 +14,9 @@ import com.saphirus.listener.ChatEvent;
 import com.saphirus.listener.JoinEvent;
 import com.saphirus.listener.TeleportEvent;
 import com.saphirus.listener.UnknownCommand;
+import com.saphirus.stats.genplayer.GenPlayer;
+import com.saphirus.stats.genplayer.TempGenPlayer;
+import com.saphirus.stats.stats.StatsCache;
 import com.saphirus.supportchat.SupportCMD;
 import com.saphirus.utils.Board;
 import com.saphirus.utils.TempPlayerCache;
@@ -66,6 +69,8 @@ public final class Main extends JavaPlugin {
     public void onDisable() {
         rmain.onDisable(); // Ryan's onDisable method
         TempPlayerCache.updateAllValuesInDatabase();
+        TempGenPlayer.updateAllValuesInDatabase();
+        StatsCache.saveAllPlayersDataToFile();
         sql.disconnectFromDatabase();
     }
 
@@ -92,6 +97,8 @@ public final class Main extends JavaPlugin {
         startConnectionCheckTask();
         for(Player all : Bukkit.getOnlinePlayers()) {
             TempPlayerCache tpc = new TempPlayerCache(all.getUniqueId().toString());
+            TempGenPlayer gp = new TempGenPlayer(all.getUniqueId().toString());
+            StatsCache sc = new StatsCache(all.getUniqueId().toString());
         }
         //LOAD DATA AND SCOREBOARD
         new BukkitRunnable() {
@@ -101,6 +108,8 @@ public final class Main extends JavaPlugin {
                     @Override
                     public void run() {
                             TempPlayerCache.updateAllValuesInDatabase();
+                            TempGenPlayer.updateAllValuesInDatabase();
+                            StatsCache.saveAllPlayersDataToFile();
 
                     }
                 }.runTaskTimerAsynchronously(Main.instance,20*60*5, 20*60*5);

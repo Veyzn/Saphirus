@@ -4,6 +4,9 @@ import com.saphirus.main.Config;
 import com.saphirus.main.Data;
 import com.saphirus.main.Main;
 import com.saphirus.manager.PunishManager;
+import com.saphirus.stats.genplayer.GenPlayer;
+import com.saphirus.stats.genplayer.TempGenPlayer;
+import com.saphirus.stats.stats.StatsCache;
 import com.saphirus.supportchat.SupportCMD;
 import com.saphirus.utils.Board;
 import com.saphirus.utils.PlayerCache;
@@ -26,9 +29,13 @@ public class JoinEvent implements Listener {
     public void onJoin(PlayerJoinEvent e) {
         Player p = e.getPlayer();
         PlayerCache pc = new PlayerCache(p.getUniqueId().toString());
+        GenPlayer gp = new GenPlayer(p.getUniqueId().toString());
+        StatsCache sc = new StatsCache(p.getUniqueId().toString());
         e.setJoinMessage(null);
         if(!pc.exists()) {
+            gp.create(p);
             pc.create(p);
+
             Config.setJoins(Config.getJoins() +1);
             Bukkit.broadcastMessage(Data.Prefix + "§8§l!!§a§lNEW§8§l!! §f" + p.getName() + " §8[§b§l#§f" + Config.getJoins() + "§8]");
         } else {
@@ -74,13 +81,17 @@ public class JoinEvent implements Listener {
 
                         TempPlayerCache tpc = new TempPlayerCache(p.getUniqueId().toString());
                         tpc.unloadPlayer();
+                        TempGenPlayer tgp = new TempGenPlayer(p.getUniqueId().toString());
+                        tgp.unloadGenPlayer();
+                        StatsCache sc = new StatsCache(p.getUniqueId().toString());
+                        sc.unloadPlayer();
                         this.cancel();
                     }
                 } else {
                     this.cancel();
                 }
             }
-        }.runTaskTimerAsynchronously(Main.instance,20*10,20*10);
+        }.runTaskTimerAsynchronously(Main.instance,20*60*5,20*60*5);
 
     }
 

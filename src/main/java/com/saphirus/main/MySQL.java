@@ -11,11 +11,6 @@ public class MySQL {
     private String host, database, username, password;
 
     public MySQL() {
-        /*this.host = "jdbc:mysql://dfw-01-5950x.pufferfish.host:3306/s1811_Saphirus";
-        this.database = "s1811_Saphirus";
-        this.username = "u1811_BGTiAJ4sJ5";
-        this.password = "PMa0xF9+Us!b+aRNOThOccIR";*/
-
         this.host = Config.cfg.getString("MySQL.host");
         this.username = Config.cfg.getString("MySQL.username");
         this.password = Config.cfg.getString("MySQL.password");
@@ -52,6 +47,7 @@ public class MySQL {
             System.err.println("Error while disconnecting from the database: " + e.getMessage());
         }
     }
+
     public void deletePlayerDataTable() {
         try {
             String dropTableQuery = "DROP TABLE IF EXISTS PlayerData";
@@ -64,6 +60,7 @@ public class MySQL {
             System.err.println("Error while dropping PlayerData table: " + e.getMessage());
         }
     }
+
     public void setColumn(String uuid, String columnName, Object value) {
         try {
             String updateQuery = "UPDATE PlayerData SET " + columnName + " = ? WHERE UUID = ?";
@@ -82,12 +79,10 @@ public class MySQL {
             String query = "SELECT " + columnName + " FROM PlayerData WHERE UUID = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.setString(1, uuid);
-
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 return resultSet.getString(columnName);
             }
-
             resultSet.close();
             preparedStatement.close();
         } catch (SQLException e) {
@@ -95,13 +90,14 @@ public class MySQL {
         }
         return null; // Return null if data is not available
     }
+
     public void createTablePlayerData() {
         try {
             String createTableQuery = "CREATE TABLE IF NOT EXISTS PlayerData (" +
                     "UUID CHAR(36) PRIMARY KEY," +
                     "Name VARCHAR(255)," +
-                    "Team VARCHAR(255),"+
-                    "Money BIGINT,"+
+                    "Team VARCHAR(255)," +
+                    "Money BIGINT," +
                     "Saphirus BIGINT," +
                     "Gems BIGINT," +
                     "Linked BOOLEAN," +
@@ -109,17 +105,16 @@ public class MySQL {
                     "Blocks BIGINT," +
                     "Fishing BIGINT," +
                     "PVE_KILLS BIGINT," +
-                    "Kills INT,"+
-                    "Deaths INT,"+
-                    "Killstreak INT,"+
-                    "Bans INT,"+
-                    "Mutes INT,"+
-                    "Warns_Total INT,"+
-                    "Warns_Now INT,"+
+                    "Kills INT," +
+                    "Deaths INT," +
+                    "Killstreak INT," +
+                    "Bans INT," +
+                    "Mutes INT," +
+                    "Warns_Total INT," +
+                    "Warns_Now INT," +
                     "JoinDate VARCHAR(255)," +
                     "Playtime BIGINT" +
                     ")";
-
             PreparedStatement preparedStatement = connection.prepareStatement(createTableQuery);
             preparedStatement.executeUpdate();
             preparedStatement.close();
@@ -128,18 +123,16 @@ public class MySQL {
         }
     }
 
-
     public void createTableBanTable() {
         try {
             String createTableQuery = "CREATE TABLE IF NOT EXISTS Saphirus_Bans (" +
                     "UUID CHAR(36) PRIMARY KEY," +
                     "Name VARCHAR(255)," +
-                    "BanEnd BIGINT,"+
-                    "BanDate VARCHAR(255),"+
-                    "Operator VARCHAR(255),"+
-                    "Reason VARCHAR(255)"+
+                    "BanEnd BIGINT," +
+                    "BanDate VARCHAR(255)," +
+                    "Operator VARCHAR(255)," +
+                    "Reason VARCHAR(255)" +
                     ")";
-
             PreparedStatement preparedStatement = connection.prepareStatement(createTableQuery);
             preparedStatement.executeUpdate();
             preparedStatement.close();
@@ -148,30 +141,17 @@ public class MySQL {
         }
     }
 
-    /*"GenSlots BIGINT," +
-                    "Multiplier DOUBLE," +
-                    "Gens LONGTEXT," +
-                    "Level INT," +
-                    "XP BIGINT," +
-                    "ControlStation LONGTEXT," +
-                    "ControlStationPlaced BOOLEAN," +
-                    "ControlStation_Collected_Gems BIGINT," +
-                    "ControlStation_Collected_Money BIGINT," +
-                    "ControlStation_Collected_Crates INT," +
-                    "ControlStation_Collected_XP BIGINT" +
-                    "Friends LONGTEXT"+*/
     public void createTableWarnTable() {
         try {
             String createTableQuery = "CREATE TABLE IF NOT EXISTS Saphirus_Warns (" +
-                    "WarnID BIGINT PRIMARY KEY AUTO_INCREMENT,"+
+                    "WarnID BIGINT PRIMARY KEY AUTO_INCREMENT," +
                     "UUID CHAR(36)," +
                     "Name VARCHAR(255)," +
-                    "Amount INT,"+
-                    "WarnDate VARCHAR(255),"+
-                    "Operator VARCHAR(255),"+
-                    "Reason VARCHAR(255)"+
+                    "Amount INT," +
+                    "WarnDate VARCHAR(255)," +
+                    "Operator VARCHAR(255)," +
+                    "Reason VARCHAR(255)" +
                     ")";
-
             PreparedStatement preparedStatement = connection.prepareStatement(createTableQuery);
             preparedStatement.executeUpdate();
             preparedStatement.close();
@@ -180,18 +160,16 @@ public class MySQL {
         }
     }
 
-
     public void createTableMuteTable() {
         try {
             String createTableQuery = "CREATE TABLE IF NOT EXISTS Saphirus_Mutes (" +
                     "UUID CHAR(36) PRIMARY KEY," +
                     "Name VARCHAR(255)," +
-                    "MuteEnd BIGINT,"+
-                    "MuteDate VARCHAR(255),"+
-                    "Operator VARCHAR(255),"+
-                    "Reason VARCHAR(255)"+
+                    "MuteEnd BIGINT," +
+                    "MuteDate VARCHAR(255)," +
+                    "Operator VARCHAR(255)," +
+                    "Reason VARCHAR(255)" +
                     ")";
-
             PreparedStatement preparedStatement = connection.prepareStatement(createTableQuery);
             preparedStatement.executeUpdate();
             preparedStatement.close();
@@ -200,28 +178,40 @@ public class MySQL {
         }
     }
 
+    public void createTableGenPlayer() {
+        try {
+            String createTableQuery = "CREATE TABLE IF NOT EXISTS GenPlayer (" +
+                    "UUID CHAR(36) PRIMARY KEY," +
+                    "GenSlots INT," +
+                    "Multiplier DOUBLE," +
+                    "Turrets INT," +
+                    "PlacedGens INT" +
+                    ")";
+            PreparedStatement preparedStatement = connection.prepareStatement(createTableQuery);
+            preparedStatement.executeUpdate();
+            preparedStatement.close();
+        } catch (SQLException e) {
+            System.err.println("Error while creating GenPlayer table: " + e.getMessage());
+        }
+    }
+
     public HashMap<Integer, String> getPlacementByBalanceMoney() {
         HashMap<Integer, String> placementMap = new HashMap<>();
-
         try {
             String query = "SELECT UUID FROM PlayerData ORDER BY Balance_money DESC";
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             ResultSet resultSet = preparedStatement.executeQuery();
-
-
             int placement = 1;
             while (resultSet.next()) {
                 String uuid = resultSet.getString("UUID");
                 placementMap.put(placement, uuid);
                 placement++;
             }
-
             resultSet.close();
             preparedStatement.close();
         } catch (SQLException e) {
             System.err.println("Error while retrieving placement by Balance_money: " + e.getMessage());
         }
-
         return placementMap;
     }
 
@@ -232,7 +222,6 @@ public class MySQL {
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.setString(1, uuid);
             ResultSet resultSet = preparedStatement.executeQuery();
-
             while (resultSet.next()) {
                 bal.put("UUID", resultSet.getString("UUID"));
                 bal.put("Name", resultSet.getString("Name"));
@@ -253,18 +242,41 @@ public class MySQL {
                 bal.put("Warns_Total", resultSet.getInt("Warns_Total"));
                 bal.put("Warns_Now", resultSet.getInt("Warns_Now"));
                 bal.put("Playtime", resultSet.getLong("Playtime"));
-
             }
-
             resultSet.close();
             preparedStatement.close();
         } catch (SQLException e) {
             System.err.println("Error while retrieving UUIDs: " + e.getMessage());
         }
-
         return bal;
     }
 
+    public HashMap<String, Object> getGenPlayer(String uuid) {
+        HashMap<String, Object> genPlayerData = new HashMap<>();
+        try {
+            String query = "SELECT * FROM GenPlayer WHERE UUID = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setString(1, uuid);
+            ResultSet resultSet = preparedStatement.executeQuery();
 
-    public Connection getConnection(){return connection;}
+            if (resultSet.next()) {
+                genPlayerData.put("UUID", resultSet.getString("UUID"));
+                genPlayerData.put("GenSlots", resultSet.getInt("GenSlots"));
+                genPlayerData.put("Multiplier", resultSet.getDouble("Multiplier"));
+                genPlayerData.put("Turrets", resultSet.getInt("Turrets"));
+                genPlayerData.put("PlacedGens", resultSet.getInt("PlacedGens"));
+            }
+
+            resultSet.close();
+            preparedStatement.close();
+        } catch (SQLException e) {
+            System.err.println("Error while retrieving GenPlayer data for UUID " + uuid + ": " + e.getMessage());
+        }
+        return genPlayerData;
+    }
+
+
+    public Connection getConnection() {
+        return connection;
+    }
 }
