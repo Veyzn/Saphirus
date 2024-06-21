@@ -89,6 +89,7 @@ public final class Main extends JavaPlugin {
         sql.createTableMuteTable();
         sql.createTableWarnTable();
         sql.createTableBanTable();
+        sql.createTableGenPlayer();
         CrateLocations cm = new CrateLocations();
         cm.createCFG();
     }

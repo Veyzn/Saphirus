@@ -15,7 +15,7 @@ public class StatsCache {
 
     public StatsCache(String UUID) {
         this.uuid = UUID;
-        this.playerFile = new File("plugins/YourPlugin/players", uuid + ".yml");
+        this.playerFile = new File("plugins/Saphirus/stats", uuid + ".yml");
         this.playerData = YamlConfiguration.loadConfiguration(playerFile);
 
         if (!playerStatsCache.containsKey(UUID)) {
