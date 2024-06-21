@@ -292,4 +292,51 @@ public class GangManager {
 
         p.updateInventory();
     }
+
+    public void openLevelInventory(Player p) {
+        FastInv inv = new FastInv(3*9, "§aGang Level");
+
+        long start_price = 100000000;
+        long price_increase = 25000000;
+        int max_level = 25;
+        long current_price = (getTeamLevel()+1)*price_increase+start_price;
+
+        for(int i : inv.getBorders()) {
+            inv.setItem(i, new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE).name("§1").build());
+        }
+        if(getTeamLevel() != 25) {
+            inv.setItem(13, new ItemBuilder(getBankMoney() >= current_price ? Material.EMERALD:Material.REDSTONE)
+                    .name(getBankMoney() >= current_price ? "§a§lLEVEL UP" : "§c§lINSUFFCIENT BALANCE")
+                    .lore("",
+                            "§a§lLEVEL §8» §c" + getTeamLevel() + " §7- §a" + (getTeamLevel()+1),
+                            "§a§lPRICE §8» §a$" + Utils.getZahl(current_price),
+                            "",
+                            "§c§lPERKS",
+                            "  §8» §a+§b0.1x Multiplier",
+                            "  §8» §a+§e0.05% Upgrade cost Reduction",
+                            "",
+                            "§a§lCURRENT PERKS",
+                            "  §8» §b" + (0.1D*getTeamLevel()) + "x Multiplier",
+                            "  §8» §e" + (0.05D*getTeamLevel()) + "% Upgrade cost Reduction")
+                    .build(), e -> {
+                if(getBankMoney() >= current_price && getTeamLevel() != max_level) {
+                    setBankMoney(getBankMoney()-current_price);
+                    setTeamLevel(getTeamLevel()+1);
+                    p.closeInventory();
+                    sendGangMessage("§a§lLEVEL UP §athe gang is now level §c" + getTeamLevel());
+                }
+
+            });
+        } else {
+            inv.setItem(13, new ItemBuilder(Material.REDSTONE_BLOCK).name("§c§lMAX LEVEL").lore(
+                    "",
+                    "§a§lPERKS",
+                    "  §8» §b" + (0.1D*getTeamLevel()) + "x Multiplier",
+                    "  §8» §e" + (0.05D*getTeamLevel()) + "% Upgrade cost Reduction"
+            ).build());
+        }
+
+        inv.open(p);
+    }
+
 }

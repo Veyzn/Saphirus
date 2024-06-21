@@ -119,7 +119,11 @@ public class GangCommand implements CommandExecutor, TabCompleter {
                     }
 
                     case "level" -> {
-                        //HAS TO BE DONE
+                        if(tpc.inTeam()) {
+                            if(isOwner(gm,p.getUniqueId().toString())) {
+                                gm.openLevelInventory(p);
+                            } else sendNotOwner(p);
+                        } else sendNotInGang(p);
                     }
 
 
