@@ -50,7 +50,7 @@ public class Board {
 
         obj.getScore("§5").setScore(7);
         Team clan = board.registerNewTeam("clan");
-        clan.setPrefix("  §f➥ §6ᴛᴇᴀᴍ: §a");
+        clan.setPrefix("  §f➥ §fɢᴀɴɢ: §a");
         clan.setSuffix("§a" + tpc.getTeam());
         clan.addEntry("§5");
 
@@ -70,7 +70,7 @@ public class Board {
         linked.addEntry("§7");
 
         obj.getScore("§7§2").setScore(2);
-        obj.getScore("  §7» §f" + Utils.fancy("Saphirus.com") +  " §7«").setScore(1);
+        obj.getScore("  §7» §f" + Utils.fancy("shop.Saphirus.com") +  " §7«").setScore(1);
 
         //ɢᴇᴍꜱ
         //ᴇᴛʜᴇʀᴇᴜᴍ

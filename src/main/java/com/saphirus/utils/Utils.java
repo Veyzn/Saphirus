@@ -6,14 +6,17 @@ import net.luckperms.api.model.group.Group;
 import net.luckperms.api.model.user.User;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
+import java.io.File;
 import java.text.DecimalFormat;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -170,6 +173,17 @@ public class Utils {
 		if (p != null) {
 			return "§a" + p.getName();
 		} else return "§c" + player;
+
+
+	}
+
+	public static String OnOffTest(UUID uuid) {
+
+		Player p = Bukkit.getPlayer(uuid);
+
+		if (p != null) {
+			return "§a" + p.getName();
+		} else return "§c" + new PlayerCache(uuid.toString()).getName();
 
 
 	}
@@ -360,5 +374,33 @@ public static String isBigger(long bigger, long then) {
 	// Helper method to check if a slot corresponds to the off-hand (second-hand)
 	private static boolean isOffHandSlot(PlayerInventory playerInventory, int slot) {
 		return slot == 45;
+	}
+
+
+	public static void createFolders() {
+		for(String folder: List.of("Crates", "Gangs")) {
+			File ordner = new File("plugins/Saphirus/" + folder + "/");
+			if(!ordner.exists()) {
+				ordner.mkdir();
+			}
+
+		}
+	}
+
+	public static  String getUUID(String playerName) {
+		// First check if the player is online
+		Player onlinePlayer = Bukkit.getPlayer(playerName);
+		if (onlinePlayer != null) {
+			return onlinePlayer.getUniqueId().toString();
+		}
+
+		// If the player is not online, check offline
+		OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(playerName);
+		if (offlinePlayer.hasPlayedBefore()) {
+			return offlinePlayer.getUniqueId().toString();
+		}
+
+		// If the player has never played on this server
+		return null;
 	}
 }

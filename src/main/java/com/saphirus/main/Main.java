@@ -9,13 +9,17 @@ import com.saphirus.crates.CrateLocations;
 import com.saphirus.daily.DailyCMD;
 import com.saphirus.daily.DailyConfig;
 import com.saphirus.fastinv.FastInvManager;
+import com.saphirus.gang.GangCommand;
 import com.saphirus.listener.ChatEvent;
 import com.saphirus.listener.JoinEvent;
 import com.saphirus.listener.TeleportEvent;
+import com.saphirus.listener.UnknownCommand;
 import com.saphirus.supportchat.SupportCMD;
 import com.saphirus.utils.Board;
 import com.saphirus.utils.TempPlayerCache;
+import com.saphirus.utils.Utils;
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandMap;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -23,11 +27,13 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.lang.reflect.Field;
+
 public final class Main extends JavaPlugin {
     public static Plugin instance;
     public static Main main;
     public static MySQL sql = new MySQL();
-
+    public static CommandMap commandMap;
     public RMain rmain;
 
     @Override
@@ -43,12 +49,24 @@ public final class Main extends JavaPlugin {
         registerCommands();
         registerListener();
         StartTimers();
-        
+        Utils.createFolders();
+
+
+        try {
+            Field commandMapField = Bukkit.getServer().getClass().getDeclaredField("commandMap");
+            commandMapField.setAccessible(true);
+            commandMap = (CommandMap) commandMapField.get(Bukkit.getServer());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     @Override
     public void onDisable() {
         rmain.onDisable(); // Ryan's onDisable method
+        TempPlayerCache.updateAllValuesInDatabase();
+        sql.disconnectFromDatabase();
     }
 
 
@@ -71,7 +89,7 @@ public final class Main extends JavaPlugin {
     }
 
     public void StartTimers() {
-
+        startConnectionCheckTask();
         for(Player all : Bukkit.getOnlinePlayers()) {
             TempPlayerCache tpc = new TempPlayerCache(all.getUniqueId().toString());
         }
@@ -83,6 +101,7 @@ public final class Main extends JavaPlugin {
                     @Override
                     public void run() {
                             TempPlayerCache.updateAllValuesInDatabase();
+
                     }
                 }.runTaskTimerAsynchronously(Main.instance,20*60*5, 20*60*5);
 
@@ -95,6 +114,7 @@ public final class Main extends JavaPlugin {
                 new BukkitRunnable() {
                     @Override
                     public void run() {
+
                         for(Player p : Bukkit.getOnlinePlayers()) {
                             Board board = new Board();
                             board.update(p);
@@ -164,6 +184,9 @@ public final class Main extends JavaPlugin {
         getCommand("fixhand").setExecutor(new FixHandCMD());
         getCommand("fix").setExecutor(new FixCMD());
         getCommand("daily").setExecutor(new DailyCMD());
+
+        getCommand("gang").setExecutor(new GangCommand());
+        getCommand("gang").setTabCompleter(new GangCommand());
     }
 
     public void registerListener() {
@@ -172,5 +195,15 @@ public final class Main extends JavaPlugin {
         pm.registerEvents(new JoinEvent(), this);
         pm.registerEvents(new ChatEvent(), this);
         pm.registerEvents(new CrateEvent(), this);
+        pm.registerEvents(new UnknownCommand(), this);
+    }
+
+    public void startConnectionCheckTask() {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                sql.getColumn("fd2aa9dc-d499-431b-bfe7-db05e46e5070", "Name") ;
+            }
+        }.runTaskTimer(this, 200,200);
     }
 }

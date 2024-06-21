@@ -104,6 +104,14 @@ public class TempPlayerCache {
         return getLongValue("Money");
     }
 
+    public String getName() {
+        return getStringValue("Name");
+    }
+
+    public void setName(String name) {
+        updateStringValue("Name", name);
+    }
+
     public void addMoney(long amount) {
         updateLongValue("Money", getMoney() + amount);
     }
@@ -395,8 +403,7 @@ public class TempPlayerCache {
                 "Bans = ?, Mutes = ?, Warns_Total = ?, Warns_Now = ?, Playtime = ? " +
                 "WHERE UUID = ?";
 
-        try (Connection connection = sql.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(updateQuery)) {
+        try (PreparedStatement preparedStatement = Main.sql.getConnection().prepareStatement(updateQuery)) {
 
             int batchSize = 1000; // Adjust the batch size as needed
             int count = 0;

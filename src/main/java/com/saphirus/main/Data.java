@@ -30,7 +30,7 @@ public class Data {
     public static String Crates = "§8| §x§F§F§F§F§F§F§lC§x§F§0§C§C§F§F§lR§x§E§1§9§9§F§F§lA§x§D§1§6§6§F§F§lT§x§C§2§3§3§F§F§lE§x§B§3§0§0§F§F§lS §8» §f";
     public static String Supportchat = "§8| §x§8§A§F§F§0§0§lS§x§7§E§F§F§0§0§lU§x§7§1§F§F§0§0§lP§x§6§5§F§F§0§0§lP§x§5§8§F§F§0§0§lO§x§4§C§F§F§0§0§lR§x§4§0§F§F§0§0§lT§x§3§3§F§F§0§0§lC§x§2§7§F§F§0§0§lH§x§1§A§F§F§0§0§lA§x§0§E§F§F§0§0§lT §8» §f";
     public static String Daily = "§8| §x§F§F§0§0§C§4§lD§x§F§F§0§0§C§F§lA§x§F§F§0§0§D§9§lI§x§F§F§0§0§E§4§lL§x§F§F§0§0§E§E§lY §8» §f";
-
+    public static String Gang = "§8| §x§F§F§F§F§F§F§lG§x§B§5§F§9§D§0§lA§x§6§A§F§4§A§0§lN§x§2§0§E§E§7§1§lG §8» §f";
     public static String getHeader() {
         return "§x§5§c§5§c§5§c§m §x§6§7§6§7§6§7§m §x§7§1§7§1§7§1§m §x§7§c§7§c§7§c§m §x§8§7§8§7§8§7§m §x§9§2§9§2§9§2§m §x§9§c§9§c§9§c§m §x§a§7§a§7§a§7§m §x§b§2§b§2§b§2§m §x§b§d§b§d§b§d§m §x§c§7§c§7§c§7§m §x§d§2§d§2§d§2§m §x§d§d§d§d§d§d§m §x§e§8§e§8§e§8§m §x§f§2§f§2§f§2§m §x§f§d§f§d§f§d§m§f» §x§F§F§F§F§F§F§lH§x§F§F§C§C§C§C§lY§x§F§F§9§9§9§9§lB§x§F§F§6§6§6§6§lR§x§F§F§3§3§3§3§lI§x§F§F§0§0§0§0§lD§x§E§8§0§4§0§4§lC§x§D§0§0§7§0§7§lL§x§B§9§0§B§0§B§lA§x§A§1§0§E§0§E§lS§x§8§A§1§2§1§2§lH §f«§8§l§m§x§f§d§f§d§f§d§m §x§f§2§f§2§f§2§m §x§e§8§e§8§e§8§m §x§d§d§d§d§d§d§m §x§d§2§d§2§d§2§m §x§c§7§c§7§c§7§m §x§b§d§b§d§b§d§m §x§b§2§b§2§b§2§m §x§a§7§a§7§a§7§m §x§9§c§9§c§9§c§m §x§9§2§9§2§9§2§m §x§8§7§8§7§8§7§m §x§7§c§7§c§7§c§m §x§7§1§7§1§7§1§m §x§6§7§6§7§6§7§m §x§5§c§5§c§5§c§m";
     }

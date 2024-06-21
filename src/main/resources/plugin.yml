@@ -44,3 +44,5 @@ commands:
     aliases: ["fixall"]
   fixhand:
   daily:
+  gang:
+    aliases: ["team","clan"]

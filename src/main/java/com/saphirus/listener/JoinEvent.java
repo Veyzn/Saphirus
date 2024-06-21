@@ -40,6 +40,7 @@ public class JoinEvent implements Listener {
 
 
         TempPlayerCache tpc = new TempPlayerCache(p.getUniqueId().toString());
+        tpc.setName(p.getName());
 
 
                 Board board = new Board();
