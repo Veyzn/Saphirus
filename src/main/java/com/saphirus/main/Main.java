@@ -10,11 +10,13 @@ import com.saphirus.daily.DailyCMD;
 import com.saphirus.daily.DailyConfig;
 import com.saphirus.fastinv.FastInvManager;
 import com.saphirus.gang.GangCommand;
+import com.saphirus.gens.GenManager;
+import com.saphirus.gens.GenJsonManager;
+import com.saphirus.gens.GenTierManager;
 import com.saphirus.listener.ChatEvent;
 import com.saphirus.listener.JoinEvent;
 import com.saphirus.listener.TeleportEvent;
 import com.saphirus.listener.UnknownCommand;
-import com.saphirus.stats.genplayer.GenPlayer;
 import com.saphirus.stats.genplayer.TempGenPlayer;
 import com.saphirus.stats.stats.StatsCache;
 import com.saphirus.supportchat.SupportCMD;
@@ -38,6 +40,9 @@ public final class Main extends JavaPlugin {
     public static MySQL sql = new MySQL();
     public static CommandMap commandMap;
     public RMain rmain;
+    public static GenJsonManager gjm;
+    public static GenTierManager gm;
+    public static GenManager gis;
 
     @Override
     public void onEnable() {
@@ -45,6 +50,11 @@ public final class Main extends JavaPlugin {
         instance = this;
         sql.connectToDatabase();
         rmain = new RMain( this ); // Please keep this immediately after the line that connects to the SQL database <3
+
+        //GEN RELATED
+        gjm = new GenJsonManager();
+        gm = new GenTierManager();
+        gis = new GenManager(gjm, gm);
 
         ConfigurationSerialization.registerClass(CrateItem.class);
         create();
@@ -101,6 +111,7 @@ public final class Main extends JavaPlugin {
             TempGenPlayer gp = new TempGenPlayer(all.getUniqueId().toString());
             StatsCache sc = new StatsCache(all.getUniqueId().toString());
         }
+
         //LOAD DATA AND SCOREBOARD
         new BukkitRunnable() {
             @Override
@@ -216,4 +227,8 @@ public final class Main extends JavaPlugin {
             }
         }.runTaskTimer(this, 200,200);
     }
+
+    public static GenJsonManager getGenJsonManager() {return gjm;}
+    public static GenTierManager getGenManager() {return gm;}
+    public static GenManager getGenItemSpawner() {return gis;}
 }

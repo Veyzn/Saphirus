@@ -48,7 +48,7 @@ public class JoinEvent implements Listener {
 
         TempPlayerCache tpc = new TempPlayerCache(p.getUniqueId().toString());
         tpc.setName(p.getName());
-
+        Main.getGenItemSpawner().loadPlayerGenerators(p.getUniqueId());
 
                 Board board = new Board();
                 board.set(p);
@@ -70,6 +70,8 @@ public class JoinEvent implements Listener {
             SupportCMD.rooms.remove(p);
             SupportCMD.rooms.remove(staff);
         }
+
+        Main.getGenItemSpawner().unloadPlayerGenerators(p.getUniqueId());
 
         new BukkitRunnable() {
             int timer = 0;
