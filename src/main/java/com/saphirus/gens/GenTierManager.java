@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class GenTierManager {
-    private static final String FILE_PATH = "plugins/YourPlugin/gen_tiers.yml";
+    private static final String FILE_PATH = "plugins/Saphirus/gen_tiers.yml";
     private File file;
     private FileConfiguration config;
     private Map<Integer, GenTier> genTiers;
@@ -25,6 +25,8 @@ public class GenTierManager {
         this.file = new File(FILE_PATH);
         this.config = YamlConfiguration.loadConfiguration(file);
         this.genTiers = new HashMap<>();
+
+
         loadGenTiers();
         saveConfig();
     }
@@ -56,13 +58,15 @@ public class GenTierManager {
 
     private void loadGenTiers() {
         genTiers.clear();
-        for (String key : config.getConfigurationSection("tiers").getKeys(false)) {
-            int tier = Integer.parseInt(key);
-            long upgradePrice = config.getLong("tiers." + tier + ".upgrade_price");
-            long sellPrice = config.getLong("tiers." + tier + ".sell_price");
-            Material block = Material.valueOf(config.getString("tiers." + tier + ".block"));
-            String displayName = config.getString("tiers." + tier + ".display_name");
-            genTiers.put(tier, new GenTier(tier, upgradePrice, sellPrice, block, displayName));
+        if(config.getConfigurationSection("tiers") != null) {
+            for (String key : config.getConfigurationSection("tiers").getKeys(false)) {
+                int tier = Integer.parseInt(key);
+                long upgradePrice = config.getLong("tiers." + tier + ".upgrade_price");
+                long sellPrice = config.getLong("tiers." + tier + ".sell_price");
+                Material block = Material.valueOf(config.getString("tiers." + tier + ".block"));
+                String displayName = config.getString("tiers." + tier + ".display_name");
+                genTiers.put(tier, new GenTier(tier, upgradePrice, sellPrice, block, displayName));
+            }
         }
     }
 

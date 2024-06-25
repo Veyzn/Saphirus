@@ -32,8 +32,11 @@ public class JoinEvent implements Listener {
         GenPlayer gp = new GenPlayer(p.getUniqueId().toString());
         StatsCache sc = new StatsCache(p.getUniqueId().toString());
         e.setJoinMessage(null);
-        if(!pc.exists()) {
+
+        if(!gp.exists()) {
             gp.create(p);
+        }
+        if(!pc.exists()) {
             pc.create(p);
 
             Config.setJoins(Config.getJoins() +1);
@@ -48,7 +51,7 @@ public class JoinEvent implements Listener {
 
         TempPlayerCache tpc = new TempPlayerCache(p.getUniqueId().toString());
         tpc.setName(p.getName());
-        Main.getGenItemSpawner().loadPlayerGenerators(p.getUniqueId());
+        Main.getGenManager().loadPlayerGenerators(p.getUniqueId());
 
                 Board board = new Board();
                 board.set(p);
@@ -71,7 +74,7 @@ public class JoinEvent implements Listener {
             SupportCMD.rooms.remove(staff);
         }
 
-        Main.getGenItemSpawner().unloadPlayerGenerators(p.getUniqueId());
+        Main.getGenManager().unloadPlayerGenerators(p.getUniqueId());
 
         new BukkitRunnable() {
             int timer = 0;

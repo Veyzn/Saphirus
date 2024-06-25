@@ -10,9 +10,7 @@ import com.saphirus.daily.DailyCMD;
 import com.saphirus.daily.DailyConfig;
 import com.saphirus.fastinv.FastInvManager;
 import com.saphirus.gang.GangCommand;
-import com.saphirus.gens.GenManager;
-import com.saphirus.gens.GenJsonManager;
-import com.saphirus.gens.GenTierManager;
+import com.saphirus.gens.*;
 import com.saphirus.listener.ChatEvent;
 import com.saphirus.listener.JoinEvent;
 import com.saphirus.listener.TeleportEvent;
@@ -208,6 +206,8 @@ public final class Main extends JavaPlugin {
 
         getCommand("gang").setExecutor(new GangCommand());
         getCommand("gang").setTabCompleter(new GangCommand());
+
+        getCommand("gens").setExecutor(new GenCMD());
     }
 
     public void registerListener() {
@@ -217,6 +217,7 @@ public final class Main extends JavaPlugin {
         pm.registerEvents(new ChatEvent(), this);
         pm.registerEvents(new CrateEvent(), this);
         pm.registerEvents(new UnknownCommand(), this);
+        pm.registerEvents(new GenEvent(), this);
     }
 
     public void startConnectionCheckTask() {
@@ -229,6 +230,6 @@ public final class Main extends JavaPlugin {
     }
 
     public static GenJsonManager getGenJsonManager() {return gjm;}
-    public static GenTierManager getGenManager() {return gm;}
-    public static GenManager getGenItemSpawner() {return gis;}
+    public static GenTierManager getGenTierManager() {return gm;}
+    public static GenManager getGenManager() {return gis;}
 }

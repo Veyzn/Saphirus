@@ -25,7 +25,7 @@ public class GenManager implements Listener {
 
     public GenManager(GenJsonManager GenJsonManager, GenTierManager genTierManager) {
         this.GenJsonManager = Main.getGenJsonManager();
-        this.genTierManager = Main.getGenManager();
+        this.genTierManager = Main.getGenTierManager();
         this.playerGenerators = new HashMap<>();
         loadAllPlayerGenerators();
         startSpawningTask();
@@ -91,7 +91,7 @@ public class GenManager implements Listener {
                         for (GenJsonManager.Generator generator : entry.getValue().values()) {
                             GenTierManager.GenTier genTier = genTierManager.getGenTiers().get(generator.getTier());
                             if (genTier != null) {
-                                spawnItem(generator.getLocation(), genTier.getSellPrice());
+                                spawnItem(generator.getLocation().add(0.5,0.2,0.5), genTier.getSellPrice());
                             }
                         }
                     }

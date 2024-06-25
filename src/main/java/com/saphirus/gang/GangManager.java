@@ -306,7 +306,7 @@ public class GangManager {
         }
         if(getTeamLevel() != 25) {
             inv.setItem(13, new ItemBuilder(getBankMoney() >= current_price ? Material.EMERALD:Material.REDSTONE)
-                    .name(getBankMoney() >= current_price ? "§a§lLEVEL UP" : "§c§lINSUFFCIENT BALANCE")
+                    .name(getBankMoney() >= current_price ? "§a§lLEVEL UP" : "§c§lINSUFFICIENT BALANCE")
                     .lore("",
                             "§a§lLEVEL §8» §c" + getTeamLevel() + " §7- §a" + (getTeamLevel()+1),
                             "§a§lPRICE §8» §a$" + Utils.getZahl(current_price),

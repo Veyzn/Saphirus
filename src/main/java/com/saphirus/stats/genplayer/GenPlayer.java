@@ -2,6 +2,8 @@ package com.saphirus.stats.genplayer;
 
 import com.saphirus.main.Main;
 import com.saphirus.main.MySQL;
+import com.saphirus.utils.LocationUtil;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.sql.Connection;
@@ -20,13 +22,15 @@ public class GenPlayer {
     }
 
     public void create(Player p) {
-        String insertQuery = "INSERT INTO GenPlayer (UUID, GenSlots, Multiplier, Turrets, PlacedGens) VALUES (?, ?, ?, ?, ?)";
+        String insertQuery = "INSERT INTO GenPlayer (UUID, GenSlots, Multiplier, Turrets, PlacedGens,Placed_Core,Core_Location) VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement preparedStatement = connection.prepareStatement(insertQuery)) {
             preparedStatement.setString(1, p.getUniqueId().toString());
             preparedStatement.setInt(2, 20); // GenSlots
             preparedStatement.setDouble(3, 1.0); // Multiplier
             preparedStatement.setInt(4, 0); // Turrets
-            preparedStatement.setInt(5, 0); // PlacedGens
+            preparedStatement.setInt(5, 0);
+            preparedStatement.setBoolean(6, false);
+            preparedStatement.setString(7, "none");// PlacedGens
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -61,6 +65,36 @@ public class GenPlayer {
         return 0;
     }
 
+    private String getStringValue(String column) {
+        String selectQuery = "SELECT " + column + " FROM GenPlayer WHERE UUID = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(selectQuery)) {
+            preparedStatement.setString(1, uuid);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getString(column);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
+    private boolean getBooleanValue(String column) {
+        String selectQuery = "SELECT " + column + " FROM GenPlayer WHERE UUID = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(selectQuery)) {
+            preparedStatement.setString(1, uuid);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getBoolean(column);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     private double getDoubleValue(String column) {
         String selectQuery = "SELECT " + column + " FROM GenPlayer WHERE UUID = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(selectQuery)) {
@@ -80,6 +114,28 @@ public class GenPlayer {
         String updateQuery = "UPDATE GenPlayer SET " + column + " = ? WHERE UUID = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(updateQuery)) {
             preparedStatement.setInt(1, value);
+            preparedStatement.setString(2, uuid);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void updateStringValue(String column, String value) {
+        String updateQuery = "UPDATE GenPlayer SET " + column + " = ? WHERE UUID = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(updateQuery)) {
+            preparedStatement.setString(1, value);
+            preparedStatement.setString(2, uuid);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void updateBooleanValue(String column, boolean value) {
+        String updateQuery = "UPDATE GenPlayer SET " + column + " = ? WHERE UUID = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(updateQuery)) {
+            preparedStatement.setBoolean(1, value);
             preparedStatement.setString(2, uuid);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
@@ -149,6 +205,14 @@ public class GenPlayer {
         updateIntValue("Turrets", amount);
     }
 
+    //METHOD FOR Placed_Core
+    public boolean isPlaced() {return getBooleanValue("Placed_Core");}
+    public void updatePlacedCore(boolean value) {updateBooleanValue("Placed_Core", value);}
+
+    //METHOD FOR CORE_LOCATION
+    public String getLocationString() {return getStringValue("Core_Location");}
+    public void setLocation(Location loc) {updateStringValue("Core_Location", LocationUtil.locationToString(loc));}
+
     // Methods for PlacedGens
     public int getPlacedGens() {
         return getIntValue("PlacedGens");
@@ -189,12 +253,15 @@ public class GenPlayer {
 
     // Method to update all values in one query
     public void updateAllValues(HashMap<String, Object> values) {
-        String updateQuery = "UPDATE GenPlayer SET GenSlots = ?, Multiplier = ?, Turrets = ?, PlacedGens = ? WHERE UUID = ?";
+        String updateQuery = "UPDATE GenPlayer SET GenSlots = ?, Multiplier = ?, Turrets = ?, PlacedGens = ?, Placed_Core = ?, Core_Location = ? WHERE UUID = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(updateQuery)) {
             preparedStatement.setInt(1, (Integer) values.get("GenSlots"));
             preparedStatement.setDouble(2, (Double) values.get("Multiplier"));
             preparedStatement.setInt(3, (Integer) values.get("Turrets"));
             preparedStatement.setInt(4, (Integer) values.get("PlacedGens"));
+            preparedStatement.setBoolean(4, (Boolean) values.get("PlacedCore"));
+            preparedStatement.setString(4, (String) values.get("Core_Location"));
+
             preparedStatement.setString(5, uuid);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
@@ -215,6 +282,8 @@ public class GenPlayer {
                     genPlayerData.put("Multiplier", resultSet.getDouble("Multiplier"));
                     genPlayerData.put("Turrets", resultSet.getInt("Turrets"));
                     genPlayerData.put("PlacedGens", resultSet.getInt("PlacedGens"));
+                    genPlayerData.put("PlacedCore", resultSet.getBoolean("Placed_Core"));
+                    genPlayerData.put("Core_Location", resultSet.getString("PlacedGens"));
                 }
             }
         } catch (SQLException e) {

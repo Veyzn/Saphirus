@@ -185,7 +185,9 @@ public class MySQL {
                     "GenSlots INT," +
                     "Multiplier DOUBLE," +
                     "Turrets INT," +
-                    "PlacedGens INT" +
+                    "PlacedGens INT," +
+                    "Placed_Core BOOLEAN," +
+                    "Core_Location VARCHAR(255)" +
                     ")";
             PreparedStatement preparedStatement = connection.prepareStatement(createTableQuery);
             preparedStatement.executeUpdate();

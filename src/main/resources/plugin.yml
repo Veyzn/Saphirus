@@ -46,3 +46,4 @@ commands:
   daily:
   gang:
     aliases: ["team","clan"]
+  gens:

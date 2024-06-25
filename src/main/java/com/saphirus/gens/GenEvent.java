@@ -26,7 +26,7 @@ public class GenEvent implements Listener {
 
             // Registriere den neuen Generator
             Location loc = block.getLocation();
-            Main.getGenItemSpawner().addGenerator(loc, tier, player.getUniqueId().toString());
+            Main.getGenManager().addGenerator(loc, tier, player.getUniqueId().toString());
 
             player.sendMessage("Du hast einen Generator der Stufe " + tier + " platziert!");
         }
@@ -39,9 +39,9 @@ public class GenEvent implements Listener {
         Block block = event.getBlock();
         Location loc = block.getLocation();
 
-        if (Main.getGenItemSpawner().isGenerator(loc)) {
+        if (Main.getGenManager().isGenerator(loc)) {
             // Entferne den Generator
-            Main.getGenItemSpawner().removeGenerator(loc);
+            Main.getGenManager().removeGenerator(loc);
 
             event.getPlayer().sendMessage("Du hast einen Generator entfernt!");
         }
